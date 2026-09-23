@@ -1,0 +1,24 @@
+{
+  "format": "qwen3-asr-bnb-nf4-inference-v1",
+  "base_model_id": "Qwen/Qwen3-ASR-0.6B",
+  "quantization": {
+    "method": "bitsandbytes NF4 weight-only",
+    "bits": 4,
+    "group_size": 32,
+    "compute_dtype": "torch.bfloat16",
+    "double_quant": false
+  },
+  "checkpoints": {
+    "baseline_nf4_w4": {
+      "path": "baseline_nf4_w4.pt",
+      "bytes": 598445625
+    },
+    "step750_engram_nf4_w4": {
+      "path": "step750_engram_nf4_w4.pt",
+      "bytes": 603676797
+    }
+  },
+  "processor_dir": "processor",
+  "model_config_dir": "model_config",
+  "load_note": "The .pt bundle overrides all parameters/buffers after rebuilding the architecture from the base model ID; load with export_eval_step750_nf4_checkpoints.py."
+}

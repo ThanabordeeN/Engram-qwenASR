@@ -1,0 +1,75 @@
+{
+  "dataset": {
+    "samples": 1,
+    "source_skip": 250000
+  },
+  "gpu": "AMD Radeon RX 9070 XT",
+  "rocm_hip": "7.1.52802-9999",
+  "torch": "2.9.1",
+  "bitsandbytes": "0.50.2",
+  "checkpoint": "/home/cepheusn/Developments/Engram-qwenASR/checkpoints/engram_step_000750.pt",
+  "quantization": {
+    "method": "bitsandbytes LLM.int8 (Linear8bitLt)",
+    "bits": 8,
+    "threshold": 6.0,
+    "has_fp16_weights": false,
+    "scope": "Linear layers only; embeddings and other non-linear parameters remain in BF16",
+    "gguf": false
+  },
+  "latency_method": "end-to-end audio preprocessing + greedy ASR generation; one warm-up excluded",
+  "storage_method": "unique live model parameter/buffer storage plus Linear8bitLt CB/SCB; peak VRAM is PyTorch allocator stats",
+  "variants": {
+    "baseline_llm_int8": {
+      "samples": 1,
+      "corpus_cer": 0.14285714285714285,
+      "char_precision": 1.0,
+      "char_recall": 0.8571428571428571,
+      "char_f1": 0.923076923076923,
+      "model_tensor_storage_bytes": 1105975040,
+      "allocated_after_warmup_bytes": 1232842240,
+      "peak_allocated_bytes": 2570108928,
+      "peak_reserved_bytes": 4498391040,
+      "inference_total_seconds": 3.910052490999078,
+      "latency_mean_seconds": 3.9079721759990207,
+      "latency_p50_seconds": 3.9079721759990207,
+      "latency_p95_seconds": 3.9079721759990207,
+      "throughput_samples_per_second": 0.2557510422946994,
+      "quantized_modules": {
+        "linear_modules": 308
+      },
+      "quantization_seconds": 4.432422155998211,
+      "quantization": {
+        "method": "bitsandbytes LLM.int8 / Linear8bitLt",
+        "threshold": 6.0,
+        "has_fp16_weights": false,
+        "scope": "Linear layers only; embeddings and other non-linear parameters remain in their original dtype"
+      }
+    },
+    "engram_step750_llm_int8": {
+      "samples": 1,
+      "corpus_cer": 0.14285714285714285,
+      "char_precision": 0.8571428571428571,
+      "char_recall": 0.8571428571428571,
+      "char_f1": 0.8571428571428571,
+      "model_tensor_storage_bytes": 1132690688,
+      "allocated_after_warmup_bytes": 1262733312,
+      "peak_allocated_bytes": 2609587200,
+      "peak_reserved_bytes": 3365928960,
+      "inference_total_seconds": 3.9236015570022573,
+      "latency_mean_seconds": 3.9220842859976983,
+      "latency_p50_seconds": 3.9220842859976983,
+      "latency_p95_seconds": 3.9220842859976983,
+      "throughput_samples_per_second": 0.2548678772479712,
+      "quantized_modules": {
+        "linear_modules": 310
+      },
+      "quantization_seconds": 3.684696571999666,
+      "quantization": {
+        "method": "bitsandbytes LLM.int8 / Linear8bitLt",
+        "threshold": 6.0,
+        "has_fp16_weights": false,
+        "scope": "Linear layers only; embeddings and other non-linear parameters remain in their original dtype"
+      }
+    }
+  }
+}

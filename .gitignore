@@ -1,0 +1,26 @@
+# Virtual environments and caches
+.venv/
+.venv.cuda-backup/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Large artifacts: tracked by checksum, not by git.
+# See checkpoints/SHA256SUMS, exports/nf4/manifest.json, and docs/provenance.md.
+checkpoints/*.pt
+exports/nf4/*.pt
+exports/nf4/*.pt.tmp
+
+# Resumable chunk records for the LLM.int8 benchmark.
+results/parts/
+
+# LaTeX intermediate files.
+reports/build/
+*.aux
+*.log
+*.out
+*.toc
+
+# OS noise
+.DS_Store

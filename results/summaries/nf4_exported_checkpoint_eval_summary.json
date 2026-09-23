@@ -1,0 +1,68 @@
+{
+  "format": "qwen3-asr-bnb-nf4-inference-v1",
+  "dataset": {
+    "samples": 300,
+    "source_skip": 250000
+  },
+  "gpu": "AMD Radeon RX 9070 XT",
+  "rocm_hip": "7.1.52802-9999",
+  "torch": "2.9.1",
+  "bitsandbytes": "0.50.2",
+  "quantization": {
+    "method": "bitsandbytes NF4 weight-only",
+    "bits": 4,
+    "group_size": 32,
+    "compute_dtype": "torch.bfloat16",
+    "double_quant": false
+  },
+  "checkpoints": {
+    "baseline_nf4_w4": {
+      "path": "/home/cepheusn/Developments/Engram-qwenASR/Qwen3ASR_Thai_Engram_ROCm/exports/nf4/baseline_nf4_w4.pt",
+      "bytes": 598445625,
+      "eval": {
+        "variant": "baseline_nf4_w4",
+        "checkpoint": "/home/cepheusn/Developments/Engram-qwenASR/Qwen3ASR_Thai_Engram_ROCm/exports/nf4/baseline_nf4_w4.pt",
+        "checkpoint_bytes": 598445625,
+        "samples": 300,
+        "source_skip": 250000,
+        "corpus_cer": 0.2870864461045891,
+        "mean_sample_cer": 0.3653777736109191,
+        "predictions_match_previous_eval": true,
+        "gpu": "AMD Radeon RX 9070 XT",
+        "rocm_hip": "7.1.52802-9999",
+        "quantization": {
+          "method": "bitsandbytes NF4 weight-only",
+          "bits": 4,
+          "group_size": 32,
+          "compute_dtype": "torch.bfloat16",
+          "double_quant": false,
+          "applied_to": "all nn.Linear and nn.Embedding weights in Qwen and Engram"
+        }
+      }
+    },
+    "step750_engram_nf4_w4": {
+      "path": "/home/cepheusn/Developments/Engram-qwenASR/Qwen3ASR_Thai_Engram_ROCm/exports/nf4/step750_engram_nf4_w4.pt",
+      "bytes": 603676797,
+      "eval": {
+        "variant": "step750_engram_nf4_w4",
+        "checkpoint": "/home/cepheusn/Developments/Engram-qwenASR/Qwen3ASR_Thai_Engram_ROCm/exports/nf4/step750_engram_nf4_w4.pt",
+        "checkpoint_bytes": 603676797,
+        "samples": 300,
+        "source_skip": 250000,
+        "corpus_cer": 0.20917822838847386,
+        "mean_sample_cer": 0.23512166668579149,
+        "predictions_match_previous_eval": true,
+        "gpu": "AMD Radeon RX 9070 XT",
+        "rocm_hip": "7.1.52802-9999",
+        "quantization": {
+          "method": "bitsandbytes NF4 weight-only",
+          "bits": 4,
+          "group_size": 32,
+          "compute_dtype": "torch.bfloat16",
+          "double_quant": false,
+          "applied_to": "all nn.Linear and nn.Embedding weights in Qwen and Engram"
+        }
+      }
+    }
+  }
+}

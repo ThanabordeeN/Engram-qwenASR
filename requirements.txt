@@ -1,0 +1,27 @@
+# Python dependencies for the Qwen3-ASR Thai Engram evaluation.
+#
+# torch is deliberately NOT pinned here: this project requires a ROCm/HIP build
+# that is matched to your GPU and ROCm version. Install it first, from the
+# official ROCm wheel index, then install this file. See docs/environment.md.
+#
+#   pip install --index-url https://download.pytorch.org/whl/rocm6.4 torch==2.9.1 torchaudio==2.9.0
+#   pip install -r requirements.txt
+#
+# Versions below are the ones used for the reported results.
+
+accelerate==1.12.0
+av==18.1.0
+bitsandbytes==0.50.2
+datasets==5.0.1
+huggingface_hub==0.36.2
+jiwer==4.0.0
+librosa==1.0.0
+matplotlib==3.10.8
+numpy==2.4.6
+pandas==3.0.5
+qwen-asr==0.0.6
+safetensors==0.8.0
+soundfile==0.14.0
+tokenizers==0.22.2
+tqdm==4.70.0
+transformers==4.57.6

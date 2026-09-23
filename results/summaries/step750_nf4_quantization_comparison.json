@@ -1,0 +1,58 @@
+{
+  "dataset": {
+    "samples": 300,
+    "source_skip": 250000
+  },
+  "gpu": "AMD Radeon RX 9070 XT",
+  "rocm_hip": "7.1.52802-9999",
+  "bitsandbytes": "0.50.2",
+  "checkpoint": "/home/cepheusn/Developments/Engram-qwenASR/checkpoints/engram_step_000750.pt",
+  "quantization": {
+    "method": "bitsandbytes NF4 weight-only",
+    "bits": 4,
+    "group_size": 32,
+    "compute_dtype": "torch.bfloat16",
+    "double_quant": false,
+    "applied_to": "all Qwen and Engram nn.Linear/nn.Embedding weights",
+    "left_unquantized": "biases, normalization/convolution weights, and 1-D parameters (base BF16; Engram checkpoint FP32)"
+  },
+  "quantized_module_counts": {
+    "linear_modules": 310,
+    "embedding_modules": 33,
+    "quantized_parameters": 941817856
+  },
+  "variants": {
+    "baseline_bf16_unquantized": {
+      "corpus_cer": 0.17805051583066525,
+      "mean_sample_cer": 0.19197821025998418
+    },
+    "baseline_nf4_w4": {
+      "samples": 300,
+      "corpus_cer": 0.2870864461045891,
+      "mean_sample_cer": 0.36537777361091905
+    },
+    "step750_engram_bf16_unquantized": {
+      "corpus_cer": 0.09044823906083245,
+      "mean_sample_cer": 0.10530073539255344
+    },
+    "step750_engram_nf4_w4": {
+      "samples": 300,
+      "corpus_cer": 0.20917822838847386,
+      "mean_sample_cer": 0.23512166668579146
+    }
+  },
+  "deltas_cer_percentage_points": {
+    "baseline_nf4_minus_baseline_bf16": 10.903593027392386,
+    "engram_nf4_minus_engram_bf16": 11.87299893276414,
+    "engram_gain_over_baseline_at_bf16": 8.76022767698328,
+    "engram_gain_over_baseline_at_nf4": 7.790821771611525
+  },
+  "paired_sample_counts_vs_same_precision_baseline": {
+    "nf4_improved": 168,
+    "nf4_tied": 56,
+    "nf4_regressed": 76,
+    "bf16_improved": 134,
+    "bf16_tied": 112,
+    "bf16_regressed": 54
+  }
+}

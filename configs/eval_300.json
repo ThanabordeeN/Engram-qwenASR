@@ -1,0 +1,28 @@
+{
+  "model_id": "Qwen/Qwen3-ASR-0.6B",
+  "dataset_name": "CMKL/Porjai-Thai-voice-dataset-central",
+  "dataset_split": "train",
+  "seed": 42,
+  "engram_layers": [
+    2
+  ],
+  "engram_buckets": {
+    "2": 10000,
+    "3": 2000
+  },
+  "engram_dim": 512,
+  "engram_heads": 16,
+  "engram_kernel": 4,
+  "min_audio_sec": 1.0,
+  "max_audio_sec": 8.0,
+  "max_new_tokens": 192,
+  "generation_use_cache": false,
+  "eval_source_skip": 250000,
+  "eval_samples": 300,
+  "checkpoint_steps": [
+    300,
+    500,
+    750,
+    1000
+  ]
+}

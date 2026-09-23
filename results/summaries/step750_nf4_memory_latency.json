@@ -1,0 +1,92 @@
+{
+  "dataset": {
+    "samples": 300,
+    "source_skip": 250000
+  },
+  "gpu": "AMD Radeon RX 9070 XT",
+  "rocm_hip": "7.1.52802-9999",
+  "torch": "2.9.1",
+  "bitsandbytes": "0.50.2",
+  "checkpoint": "/home/cepheusn/Developments/Engram-qwenASR/checkpoints/engram_step_000750.pt",
+  "quantization": {
+    "method": "bitsandbytes NF4 weight-only",
+    "bits": 4,
+    "group_size": 32,
+    "compute_dtype": "torch.bfloat16",
+    "double_quant": false
+  },
+  "latency_method": "end-to-end audio preprocessing + greedy ASR generation; one warm-up excluded; 300 timed clips",
+  "storage_method": "unique live model parameter/buffer/quant-state tensor storage; peak VRAM is PyTorch CUDA allocator stats",
+  "variants": {
+    "baseline_bf16": {
+      "samples": 300,
+      "corpus_cer": 0.17805051583066525,
+      "mean_sample_cer": 0.19197821025998416,
+      "model_tensor_storage_bytes": 1570228480,
+      "allocated_after_load_bytes": 1573132288,
+      "peak_allocated_bytes": 1706992128,
+      "peak_reserved_bytes": 2174746624,
+      "inference_total_seconds": 226.5606953260003,
+      "latency_mean_seconds": 0.7550933494399882,
+      "latency_p50_seconds": 0.6845086749999609,
+      "latency_p95_seconds": 1.4046129950002069,
+      "throughput_samples_per_second": 1.3241484784831155,
+      "predictions_match_saved_eval": true
+    },
+    "baseline_nf4_w4": {
+      "samples": 300,
+      "corpus_cer": 0.2870864461045891,
+      "mean_sample_cer": 0.3653777736109191,
+      "model_tensor_storage_bytes": 598039360,
+      "allocated_after_load_bytes": 693792256,
+      "peak_allocated_bytes": 1099329536,
+      "peak_reserved_bytes": 1763704832,
+      "inference_total_seconds": 400.00061165900024,
+      "latency_mean_seconds": 1.3332224521666527,
+      "latency_p50_seconds": 1.1723164940003699,
+      "latency_p95_seconds": 2.364093896000668,
+      "throughput_samples_per_second": 0.7499988531411282,
+      "quantized_modules": {
+        "linear_modules": 308,
+        "embedding_modules": 1
+      },
+      "quantization_seconds": 6.0597363509996285,
+      "predictions_match_saved_eval": true
+    },
+    "engram_step750_bf16": {
+      "samples": 300,
+      "corpus_cer": 0.09044823906083245,
+      "mean_sample_cer": 0.10530073539255344,
+      "model_tensor_storage_bytes": 1603227392,
+      "allocated_after_load_bytes": 1687379456,
+      "peak_allocated_bytes": 1742401536,
+      "peak_reserved_bytes": 2359296000,
+      "inference_total_seconds": 250.1014143809998,
+      "latency_mean_seconds": 0.8335671674333692,
+      "latency_p50_seconds": 0.7632524540003942,
+      "latency_p95_seconds": 1.5456240170005913,
+      "throughput_samples_per_second": 1.1995134083607604,
+      "predictions_match_saved_eval": true
+    },
+    "engram_step750_nf4_w4": {
+      "samples": 300,
+      "corpus_cer": 0.20917822838847386,
+      "mean_sample_cer": 0.23512166668579149,
+      "model_tensor_storage_bytes": 603226560,
+      "allocated_after_load_bytes": 703139840,
+      "peak_allocated_bytes": 1109789184,
+      "peak_reserved_bytes": 1658847232,
+      "inference_total_seconds": 466.8685657039996,
+      "latency_mean_seconds": 1.5561143834333233,
+      "latency_p50_seconds": 1.399157913999261,
+      "latency_p95_seconds": 2.8138415249995887,
+      "throughput_samples_per_second": 0.6425791369089597,
+      "quantized_modules": {
+        "linear_modules": 310,
+        "embedding_modules": 33
+      },
+      "quantization_seconds": 5.6327212790001795,
+      "predictions_match_saved_eval": true
+    }
+  }
+}
