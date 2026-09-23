@@ -14,14 +14,19 @@ Rebuild both with `./zenodo/build_archives.sh` (optionally pass a version, e.g.
 `sha256` of the current archives:
 
 ```
-c55ccf6e2f78914c425bc5b1eaeadcade322ef36a528490edfcfd3d1df5b8453  EngramQwenASR-software-v1.0.0.zip
-c63abcb98aae9400c9469d633dc57d8aaa805667a4cb712dba41eb1f733bfaa5  EngramQwenASR-technical-reports-v1.0.0.zip
+98fb576e41a2c192bbe2a5d5d82b18193abe32d53e62d7a5219393a0b0210de5  EngramQwenASR-software-v1.0.0.zip
+77bdff6a975b17639afc5dd2586dad8883403898b1401e1abed3c82412a9e213  EngramQwenASR-technical-reports-v1.0.0.zip
 ```
 
 Both archives were verified by extraction into an empty directory: the reports
 archive compiles with LuaLaTeX on its own (15 pages English, 16 Thai, no
 undefined references), and the software archive passes `scripts/00_check_setup.py`
 without the companion record present.
+
+Note that `reports/` is **not** in the GitHub repository — it is git-ignored and
+distributed only through the reports record. `zenodo/build_archives.sh` reads it
+from the working tree, so keep a local copy or re-extract the reports archive
+before rebuilding the deposit.
 
 ---
 
