@@ -207,6 +207,14 @@ blue, vermillion, gray = "#0072B2", "#D55E00", "#666666"
 
 # Figure 1: the central quality-storage trade-off narrative.
 fig, ax = plt.subplots(figsize=(7.2, 5.2), constrained_layout=True)
+plot_entries = {
+    "baseline_bf16": benchmark_entries["Baseline BF16"],
+    "baseline_nf4_w4": benchmark_entries["Baseline NF4"],
+    "engram_step750_bf16": benchmark_entries["Engram BF16 step 750"],
+    "engram_step750_nf4_w4": benchmark_entries["Engram NF4 step 750"],
+    "baseline_llm_int8": benchmark_entries["Baseline LLM.int8"],
+    "engram_step750_llm_int8": benchmark_entries["Engram LLM.int8 step 750"],
+}
 point_specs = [
     ("Baseline BF16", "baseline_bf16", blue, "s", (8, -18)),
     ("Baseline NF4", "baseline_nf4_w4", blue, "o", (8, 4)),
@@ -217,7 +225,7 @@ point_specs = [
 ]
 coords = {}
 for label, key, color, marker, offset in point_specs:
-    entry = benchmark_entries[key]
+    entry = plot_entries[key]
     x = entry["model_tensor_storage_bytes"] / 2**30
     y = entry["corpus_cer"] * 100
     coords[label] = (x, y)
