@@ -24,3 +24,7 @@ reports/build/
 
 # OS noise
 .DS_Store
+
+# Zenodo deposit archives: build outputs, rebuilt by zenodo/build_archives.sh.
+# Their sha256 is recorded in zenodo/METADATA.md.
+zenodo/*.zip

@@ -1,0 +1,282 @@
+# Zenodo deposit — Thai ASR with an N-gram Engram on Qwen3-ASR-0.6B
+
+Prepared 2026-09-24. Two separate records, following the same split used for the
+Audio-Laya deposit: software and technical reports.
+
+| File | Record | Licence | Size |
+|---|---|---|---|
+| `EngramQwenASR-software-v1.0.0.zip` | Software | MIT | 333 MB |
+| `EngramQwenASR-technical-reports-v1.0.0.zip` | Publication / Report | CC BY 4.0 | 812 KB |
+
+Rebuild both with `./zenodo/build_archives.sh` (optionally pass a version, e.g.
+`./zenodo/build_archives.sh 1.0.1`).
+
+`sha256` of the current archives:
+
+```
+c55ccf6e2f78914c425bc5b1eaeadcade322ef36a528490edfcfd3d1df5b8453  EngramQwenASR-software-v1.0.0.zip
+c63abcb98aae9400c9469d633dc57d8aaa805667a4cb712dba41eb1f733bfaa5  EngramQwenASR-technical-reports-v1.0.0.zip
+```
+
+Both archives were verified by extraction into an empty directory: the reports
+archive compiles with LuaLaTeX on its own (15 pages English, 16 Thai, no
+undefined references), and the software archive passes `scripts/00_check_setup.py`
+without the companion record present.
+
+---
+
+## Read this before you publish
+
+**1. Checkpoint licensing.** The Engram checkpoints are trained on
+`CMKL/Porjai-Thai-voice-dataset-central`, which is licensed **CC BY-SA 4.0**.
+Share-alike terms may attach to derived weights. Publishing the checkpoints makes
+them downloadable by anyone, so confirm the position with the dataset owners
+(CMKL University) first. Two safe alternatives if you would rather not wait:
+
+* drop `checkpoints/` from the software archive and publish code + results only
+  (about 1.5 MB). Reproduction then needs the checkpoints from elsewhere, and
+  `scripts/00_check_setup.py` will say so.
+* publish the software record now and add the checkpoints in a new version once
+  the licence question is settled. Zenodo versioning keeps the DOI stable.
+
+**2. Publishing is permanent.** Zenodo mints a DOI on publish; a record cannot be
+deleted, only superseded by a new version. Check the preview carefully.
+
+**3. The dataset is not in either archive.** Only the frozen reference list
+(`data/eval_set_300.json`) is. That is deliberate — the corpus is CC BY-SA 4.0 and
+stays with its own provider.
+
+---
+
+## Record 1 — Software
+
+**Upload type:** Software
+**Access right:** Open Access
+**Licence:** MIT License
+**Version:** 1.0.0
+**Language:** English
+**DOI:** leave empty — Zenodo assigns it on publish
+
+**Title**
+
+```
+Thai ASR with an N-gram Engram on Qwen3-ASR-0.6B: evaluation package for BF16, NF4, and LLM.int8 inference on ROCm
+```
+
+**Creators**
+
+```
+Nammungkun, Thanabodee
+ORCID: 0009-0004-9410-9839
+```
+
+**Description** (paste as-is; Zenodo renders limited HTML, plain text is fine)
+
+```
+Evaluation package for adding a token-level bigram/trigram memory (Engram) to a
+frozen Qwen3-ASR-0.6B, and for comparing three numerical precisions on Thai
+speech recognition under ROCm.
+
+Method. A Thai N-gram Engram is injected after decoder layer 2's FFN residual of
+a frozen Qwen3-ASR-0.6B. Quality is measured on a fixed held-out set of 300 Thai
+clips taken from source offset 250,000 of the Porjai-Thai-voice-dataset-central
+streaming split, filtered to 1-8 seconds. Decoding is greedy with
+max_new_tokens=192 and use_cache=False. Three precisions are compared: BF16, NF4
+(bitsandbytes weight-only, group size 32, BF16 compute, double quantization
+disabled, applied to Linear and Embedding modules), and LLM.int8 (bitsandbytes
+Linear8bitLt, threshold 6.0, applied to Linear modules only, embeddings left in
+BF16). Model-tensor storage, peak allocated VRAM, and per-clip latency are
+reported separately from quality.
+
+Reported results, with the limits that apply to each:
+
+- BF16, 300 clips. Baseline corpus character error rate (CER) 17.8051% and
+  character-level micro F1 86.3235%; Engram step 750 CER 9.0448% and F1
+  92.9302%. Engram checkpoints were tested at steps 300, 500, 750, and 1000;
+  step 750 was best on this slice. This is one fixed 300-clip sample, not the
+  full corpus, and no confidence intervals were computed.
+- NF4. Baseline CER 28.7086%, Engram step 750 CER 20.9178%. Model-tensor
+  storage fell by about 62%, but peak allocated VRAM and per-clip latency both
+  rose relative to BF16. Engram NF4 remained 3.1128 CER percentage points above
+  the BF16 baseline. That is a difference in CER, not a 3% loss of accuracy.
+- LLM.int8. Baseline CER 18.8901%, Engram step 750 CER 10.8413%. Storage fell by
+  about 29% versus BF16, but peak allocated VRAM rose by about 53-54% and mean
+  latency rose from 0.755 to 4.354 s/clip for the baseline and from 0.834 to
+  4.055 s/clip for Engram.
+- Export and reload. Both NF4 variants were exported as self-contained bundles
+  and reloaded into freshly rebuilt architectures; reloaded predictions matched
+  the in-memory ones on all 300 clips. The bundles load only against
+  bitsandbytes 0.50.2, because the packed Params4bit layout is not a stable
+  format.
+- Compute. All timings are from one AMD Radeon RX 9070 XT (gfx1201) with
+  ROCm/HIP 7.1.52802-9999, PyTorch 2.9.1, and bitsandbytes 0.50.2. Fewer bits did
+  not mean faster inference in this setup.
+
+What this deposit contains: the library extracted from the original evaluation
+notebook, one numbered script per reported result, the frozen evaluation-set
+manifest with a sha256 over its reference list, the four Engram checkpoints with
+SHA256SUMS, and every per-sample prediction, summary table, and figure behind the
+reported numbers.
+
+Reproducibility is partial, not bitwise. The dataset is streamed rather than
+pinned to a revision, so the frozen reference list is the contract: each script
+re-checks its streamed clips against data/eval_set_300.json and fails if the
+upstream data changed. The Engram training loop is not included; the checkpoints
+are inputs. Quantized GGUF inference is out of scope, and no number here comes
+from llama.cpp.
+
+Checks that ship with the deposit: scripts/00_check_setup.py verifies files,
+checkpoint checksums, and the frozen set without a GPU; scripts/07_verify_reproduction.py
+re-runs each variant on a few clips and asserts the decoded text and the exact
+tensor-storage values; scripts/06_make_tables_figures.py recomputes every corpus
+CER from the saved predictions and raises if any disagrees with the value recorded
+at run time.
+
+The repository does not redistribute the Porjai-Thai-voice-dataset-central corpus
+or Qwen/Qwen3-ASR-0.6B; obtain each from its own source under its own terms.
+```
+
+**Keywords**
+
+```
+automatic speech recognition
+Thai speech recognition
+Qwen3-ASR
+n-gram memory
+Engram
+quantization
+NF4
+LLM.int8
+bitsandbytes
+ROCm
+model compression
+reproducibility
+```
+
+**Related works** — add after the reports record exists:
+relation `is supplemented by`, identifier `10.5281/zenodo.<reports-id>`
+
+---
+
+## Record 2 — Reports
+
+**Upload type:** Publication → Report (or Preprint, if your institution treats it
+that way)
+**Access right:** Open Access
+**Licence:** Creative Commons Attribution 4.0 International
+**Version:** 1.0.0
+**Language:** English — the archive also carries a Thai edition
+**DOI:** leave empty — Zenodo assigns it on publish
+
+**Title**
+
+```
+Adding a Thai N-gram Engram to Qwen3-ASR-0.6B: effects on transcription error, memory, and latency
+```
+
+**Creators**
+
+```
+Nammungkun, Thanabodee
+ORCID: 0009-0004-9410-9839
+```
+
+**Description**
+
+```
+Technical report, version 1.0.0, in English and Thai. Both editions are included
+as PDF with their LuaLaTeX sources and the figures they include.
+
+The report asks whether a token-level N-gram memory (Engram) reduces Thai
+transcription errors when added to a frozen Qwen3-ASR-0.6B, and what three
+numerical precisions cost in quality, model-tensor storage, peak allocated VRAM,
+and latency. It is written for a reader who is new to ASR terminology: the terms
+that carry the argument are defined where they are used.
+
+Contents: five chapters covering the problem and scope, the background and model
+design, the methodology, the results, and the conclusions, followed by
+acknowledgements, a reproducibility-artifact appendix, and the bibliography.
+
+Findings, with the limits that apply to each:
+
+- Engram step 750 in BF16 reduced corpus character error rate from 17.8051% to
+  9.0448% on a fixed 300-clip Thai evaluation set, with character-level micro F1
+  rising from 86.3235% to 92.9302%. This is one fixed sample from one offset of
+  one corpus, not the full dataset, and no confidence intervals were computed.
+- Quantization cost quality in this setup. NF4 raised CER to 28.7086% for the
+  baseline and 20.9178% for Engram; LLM.int8 raised it to 18.8901% and 10.8413%.
+  Engram NF4 remained 3.1128 CER percentage points above the BF16 baseline, which
+  is a difference in CER and not a 3% loss of accuracy.
+- Smaller weights were not faster. Both quantized variants ran slower per clip
+  than their BF16 counterpart on this GPU and backend. NF4 reduced model-tensor
+  storage by about 62% and LLM.int8 by about 29%, but both increased peak
+  allocated VRAM.
+- The two quantizers do not touch the same parameters: NF4 applies to Linear and
+  Embedding modules, LLM.int8 to Linear modules only, leaving embeddings in BF16.
+  This is a limitation of the comparison and the report says so.
+
+The report is explicit that these are measurements of one ROCm/bitsandbytes
+configuration on one GPU, not general performance claims, and that the Engram
+training loop is not part of the deposit. Quantized GGUF inference is out of
+scope and no number comes from llama.cpp.
+
+The Thai speech data comes from the Porjai-Thai-voice-dataset-central corpus
+(CMKL University, CC BY-SA 4.0), which is not redistributed; the 300 clips used
+are identified only by offset and by a frozen reference list. The base model is
+Qwen3-ASR-0.6B from the Qwen Team.
+```
+
+**Keywords**
+
+```
+automatic speech recognition
+Thai speech recognition
+Qwen3-ASR
+Engram
+n-gram memory
+quantization
+NF4
+LLM.int8
+ROCm
+model compression
+technical report
+```
+
+**Related works** — add after the software record exists:
+relation `is supplement to`, identifier `10.5281/zenodo.<software-id>`
+
+---
+
+## After publishing both records
+
+1. Copy each DOI into the other record's **Related works** field and save.
+   Editing metadata after publication is allowed; the DOI itself does not change.
+2. Add the software DOI to `CITATION.cff` (the commented placeholder at the
+   bottom marks the spot) and to `README.md`, then commit.
+3. If you want the repository linked from the records, it has to be public first.
+   Until then the Zenodo DOI is the citable address.
+
+---
+
+## What is in each archive, and what is not
+
+**Software archive** — `README.md`, `REPRODUCE.md`, `LICENSE`, `CITATION.cff`,
+`requirements.txt`, `.gitignore`, `src/`, `scripts/`, `configs/`, `data/`,
+`docs/`, `results/{predictions,summaries,tables,figures}/`, `checkpoints/`,
+`archive/notebooks/`, and `exports/nf4/manifest.json`.
+
+**Reports archive** — `reports/{en,th}/` (Markdown, LaTeX, and PDF) and
+`reports/LICENSE.md`, plus `results/figures/` so the LaTeX sources compile from a
+fresh extraction. The relative layout is preserved because the `.tex` files
+resolve figures through `\graphicspath{{../../results/figures/}}`.
+
+Deliberately excluded:
+
+| Excluded | Why |
+|---|---|
+| `exports/nf4/*.pt` (1.2 GB) | regenerable with `scripts/04_export_eval_nf4.py`, and only loadable against bitsandbytes 0.50.2 |
+| `results/parts/` | resumable chunk scratch for the LLM.int8 benchmark, superseded once combined |
+| `reports/build/` | LaTeX intermediate files |
+| `reports/archive/nf4_memory_accuracy_technical_report.md` | earlier interim report, superseded by the five-chapter reports |
+| `.venv/`, `.venv.cuda-backup/`, `__pycache__/` | local environments |
+| the Porjai corpus, Qwen3-ASR-0.6B | third-party resources, fetched at run time |

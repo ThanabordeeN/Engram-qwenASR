@@ -1,0 +1,43 @@
+cff-version: 1.2.0
+message: "If you use this software or build on its results, please cite the version you used."
+type: software
+title: "Adding a Thai N-gram Engram to Qwen3-ASR-0.6B: quality, memory, and latency of BF16, NF4, and LLM.int8 inference on ROCm"
+abstract: >-
+  Evaluation package that adds a token-level bigram/trigram memory (Engram) to a
+  frozen Qwen3-ASR-0.6B and measures Thai transcription quality on a fixed
+  300-clip held-out set, then compares BF16, bitsandbytes NF4, and bitsandbytes
+  LLM.int8 for quality, model-tensor storage, peak allocated VRAM, and latency on
+  an AMD Radeon RX 9070 XT under ROCm. Engram step 750 in BF16 reduced corpus
+  character error rate from 17.8051% to 9.0448% on this slice; both quantized
+  variants were slower per clip than their BF16 counterpart, and Engram NF4
+  remained 3.1128 CER percentage points above the BF16 baseline. The deposit
+  contains the library, one script per reported result, the frozen evaluation-set
+  manifest, the four Engram checkpoints, and every prediction and summary behind
+  the reported numbers.
+authors:
+  - family-names: Nammungkun
+    given-names: Thanabodee
+    orcid: "https://orcid.org/0009-0004-9410-9839"
+version: 1.0.0
+date-released: 2026-09-24
+license: MIT
+keywords:
+  - automatic speech recognition
+  - Thai speech recognition
+  - Qwen3-ASR
+  - n-gram memory
+  - Engram
+  - quantization
+  - NF4
+  - LLM.int8
+  - bitsandbytes
+  - ROCm
+  - model compression
+  - reproducibility
+# Once the Zenodo record is published, add the assigned DOI here, for example:
+# doi: 10.5281/zenodo.0000000
+# The companion technical-report record can be referenced as:
+# identifiers:
+#   - type: doi
+#     value: 10.5281/zenodo.0000000
+#     description: "Companion technical reports (English and Thai)"

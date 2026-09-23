@@ -86,16 +86,25 @@ expected = [
     "figures/figure_1_cer_vs_tensor_storage.pdf",
     "figures/figure_2_scaling_cer_f1.pdf",
 ]
+expected += [f"summaries/preset_a_layer2_step{step}_evaluation.json" for step in EXPECTED_STEPS]
+expected += [f"predictions/preset_a_layer2_step{step}_predictions.csv" for step in EXPECTED_STEPS]
 for rel in expected:
     check(f"result {rel}", (PROJECT_ROOT / "results" / rel).is_file())
 
+# --- optional artifacts ----------------------------------------------------- #
+# Not required to reproduce the numbers, so a miss is reported but does not fail.
+# The reports live in the companion Zenodo record; the NF4 .pt bundles are
+# regenerable with scripts/04 and are excluded from the software archive.
+print("\nOptional (companion record or regenerable):")
 for lang in ("en", "th"):
-    for ext in ("md", "tex", "pdf"):
-        rel = f"reports/{lang}/project_technical_report_{lang}.{ext}"
-        check(f"report {rel}", (PROJECT_ROOT / rel).is_file())
-
-for name in ("baseline_nf4_w4.pt", "step750_engram_nf4_w4.pt", "manifest.json"):
-    check(f"export {name}", (PROJECT_ROOT / "exports" / "nf4" / name).is_file())
+    present = sum((PROJECT_ROOT / f"reports/{lang}" / f"project_technical_report_{lang}.{ext}").is_file()
+                  for ext in ("md", "tex", "pdf"))
+    print(f"  reports/{lang}/: {present}/3 files"
+          + ("" if present == 3 else "  — see the companion technical-reports record"))
+for name in ("baseline_nf4_w4.pt", "step750_engram_nf4_w4.pt"):
+    present = (PROJECT_ROOT / "exports" / "nf4" / name).is_file()
+    print(f"  exports/nf4/{name}: {'present' if present else 'absent'}"
+          + ("" if present else "  — regenerate with scripts/04_export_eval_nf4.py"))
 
 # --- runtime (informational) ---------------------------------------------- #
 print("\nRuntime (informational):")

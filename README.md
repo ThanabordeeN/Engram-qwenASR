@@ -76,11 +76,9 @@ Full write-ups: [`reports/en/project_technical_report_en.pdf`](reports/en/) and
 │   ├── en/, th/               Markdown, LaTeX, and built PDF per language
 │   ├── build/                 LaTeX intermediate files (git-ignored)
 │   └── archive/               superseded intermediate report
-├── patches/                   experimental native llama.cpp Engram patch (unvalidated)
 ├── docs/
 │   ├── environment.md         hardware and software record
-│   ├── provenance.md          notebook hash, artifact → script map, checksums
-│   └── llama_cpp.md           status of the native llama.cpp work
+│   └── provenance.md          notebook hash, artifact → script map, checksums
 └── archive/notebooks/         the original evaluation notebooks (provenance only)
 ```
 
@@ -115,13 +113,38 @@ the saved predictions and raises if it disagrees with the value recorded at run
 time.
 
 **Not verified.** The results cover 300 clips from one offset of one dataset;
-no confidence intervals were computed. The native llama.cpp Engram port runs but
-its output does not match PyTorch, so it is **not** used for any number in the
-report — see [`docs/llama_cpp.md`](docs/llama_cpp.md). The Engram training loop
-is not in this repository; the checkpoints are inputs.
+no confidence intervals were computed. The Engram training loop is not in this
+repository; the checkpoints are inputs. Quantized GGUF inference is out of scope
+for this deposit — the reported NF4 and LLM.int8 numbers come from
+PyTorch/ROCm through bitsandbytes, not from llama.cpp.
 
 ## License and data
 
-Dataset: [`CMKL/Porjai-Thai-voice-dataset-central`](https://huggingface.co/datasets/CMKL/Porjai-Thai-voice-dataset-central).
-Base model: [`Qwen/Qwen3-ASR-0.6B`](https://huggingface.co/Qwen/Qwen3-ASR-0.6B).
-Neither is redistributed here; both are fetched at run time by the scripts.
+* **Code, configuration, and result artifacts:** MIT — see [`LICENSE`](LICENSE).
+* **Technical reports** (`reports/`): CC BY 4.0 — see [`reports/LICENSE.md`](reports/LICENSE.md).
+
+Data and models used, **not redistributed here**:
+
+| Resource | Owner | Licence |
+|---|---|---|
+| [Porjai-Thai-voice-dataset-central](https://huggingface.co/datasets/CMKL/Porjai-Thai-voice-dataset-central) (Thai-dialect corpus) | CMKL University; Suwanbandit, Naowarat, Sangpetch, and Chuangsuwanich | CC BY-SA 4.0 |
+| [Qwen/Qwen3-ASR-0.6B](https://huggingface.co/Qwen/Qwen3-ASR-0.6B) | Qwen Team | see model card |
+
+Both are fetched at run time by the scripts. The corpus card records support from
+the PMU-C grant (C10F630122), compute from the Apex cluster team, and donated
+evaluation data from Wang via the Wang Data Market. The dataset paper is
+Suwanbandit et al., *Thai Dialect Corpus and Transfer-based Curriculum Learning
+Investigation for Dialect Automatic Speech Recognition*, INTERSPEECH 2023
+([doi](https://doi.org/10.21437/Interspeech.2023-1828)).
+
+> **Licence caveat for the Engram checkpoints.** The checkpoints in
+> `checkpoints/` are trained on a CC BY-SA 4.0 corpus. Share-alike terms may
+> attach to derived weights, so confirm the position with the dataset owners
+> before publishing the checkpoints in a Zenodo deposit or elsewhere. The
+> dataset itself is never redistributed here.
+
+## Citation
+
+`CITATION.cff` is machine-readable; GitHub and Zenodo both read it. The Zenodo
+DOI is minted on publication and should then be added to `CITATION.cff` and to
+[`zenodo/METADATA.md`](zenodo/METADATA.md).

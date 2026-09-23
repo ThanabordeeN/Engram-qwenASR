@@ -99,7 +99,6 @@ running one, because the packed layout of `Params4bit` is not a stable format.
 |---|---|
 | `reports/archive/nf4_memory_accuracy_technical_report.md` | earlier interim report, superseded by the five-chapter reports |
 | `archive/notebooks/` | original interactive entry points; the code now lives in `src/` |
-| `patches/llama.cpp-engram-experimental.patch` | experimental native port; unvalidated, see `docs/llama_cpp.md` |
 
 ## How to check that nothing drifted
 
