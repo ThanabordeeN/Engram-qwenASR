@@ -15,8 +15,12 @@ exports/nf4/*.pt.tmp
 # Resumable chunk records for the LLM.int8 benchmark.
 results/parts/
 
+# The technical reports are distributed through the Zenodo record, not through git.
+# They keep a DOI and a CC BY 4.0 licence of their own. The working tree still
+# carries them, and zenodo/build_archives.sh picks them up.
+reports/
+
 # LaTeX intermediate files.
-reports/build/
 *.aux
 *.log
 *.out

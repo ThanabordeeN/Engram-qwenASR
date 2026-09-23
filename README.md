@@ -36,8 +36,9 @@ Reading notes that matter:
 * F1 here is **pooled character-level micro-F1** after Thai normalization and
   whitespace removal — not word-level F1, and not accuracy.
 
-Full write-ups: [`reports/en/project_technical_report_en.pdf`](reports/en/) and
-[`reports/th/project_technical_report_th.pdf`](reports/th/).
+Full write-ups are **not stored in this repository**. They ship in the companion
+Zenodo record as PDF plus LuaLaTeX sources, in English and Thai — see
+[`zenodo/METADATA.md`](zenodo/METADATA.md) for the record and its DOI.
 
 ---
 
@@ -72,15 +73,24 @@ Full write-ups: [`reports/en/project_technical_report_en.pdf`](reports/en/) and
 │   ├── tables/                report tables (csv)
 │   ├── figures/               report figures (pdf + png)
 │   └── parts/                 resumable chunk records (git-ignored)
-├── reports/
+├── reports/                   NOT in git; ships in the companion Zenodo record
 │   ├── en/, th/               Markdown, LaTeX, and built PDF per language
 │   ├── build/                 LaTeX intermediate files (git-ignored)
 │   └── archive/               superseded intermediate report
+├── zenodo/
+│   ├── METADATA.md            ready-to-paste deposit fields + archive sha256
+│   └── build_archives.sh      builds both deposit archives
 ├── docs/
 │   ├── environment.md         hardware and software record
 │   └── provenance.md          notebook hash, artifact → script map, checksums
 └── archive/notebooks/         the original evaluation notebooks (provenance only)
 ```
+
+`reports/` is deliberately excluded from version control: the write-ups are
+distributed through the Zenodo record, where they get a DOI and a licence of
+their own (CC BY 4.0). The results they cite — every prediction, summary, table,
+and figure — *are* in this repository, so the numbers stay auditable here.
+`reports/` remains in the working tree; `zenodo/build_archives.sh` picks it up.
 
 ## Quick start
 
@@ -121,7 +131,7 @@ PyTorch/ROCm through bitsandbytes, not from llama.cpp.
 ## License and data
 
 * **Code, configuration, and result artifacts:** MIT — see [`LICENSE`](LICENSE).
-* **Technical reports** (`reports/`): CC BY 4.0 — see [`reports/LICENSE.md`](reports/LICENSE.md).
+* **Technical reports** (in the companion Zenodo record, not here): CC BY 4.0.
 
 Data and models used, **not redistributed here**:
 

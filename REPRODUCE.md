@@ -48,21 +48,24 @@ Steps 1–5 are deterministic in the sense that greedy decoding
 the evaluation set is fixed by offset and hash. Re-running on different hardware
 or a different bitsandbytes build may still change results.
 
-## 2. Rebuild the reports
+## 2. Rebuild the reports (optional)
 
-The PDFs are built with LuaLaTeX (needed for Thai script). Figures are read from
-`results/figures/` via `\graphicspath`, so build into `reports/build/` and copy
-the PDF next to its source:
+The reports are **not** in this repository. They ship in the companion Zenodo
+record as PDF plus LuaLaTeX sources in English and Thai — see
+[`zenodo/METADATA.md`](zenodo/METADATA.md). Extract that archive and you get
+`reports/{en,th}/` alongside `results/figures/`, which is the layout the `.tex`
+files expect.
+
+The PDFs are built with LuaLaTeX, needed for Thai script. Figures resolve through
+`\graphicspath{{../../results/figures/}}`, so build from `reports/build/`:
 
 ```bash
 cd reports/build
-lualatex -interaction=nonstopmode project_technical_report_en.tex
-lualatex -interaction=nonstopmode project_technical_report_en.tex
-cp project_technical_report_en.pdf ../en/
-
-lualatex -interaction=nonstopmode project_technical_report_th.tex
-lualatex -interaction=nonstopmode project_technical_report_th.tex
-cp project_technical_report_th.pdf ../th/
+for lang in en th; do
+  lualatex -interaction=nonstopmode ../$lang/project_technical_report_$lang.tex
+  lualatex -interaction=nonstopmode ../$lang/project_technical_report_$lang.tex
+  cp project_technical_report_$lang.pdf ../$lang/
+done
 ```
 
 Two passes are required so the table of contents and cross-references resolve.
