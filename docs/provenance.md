@@ -93,12 +93,15 @@ These two files are only reproducible against bitsandbytes `0.50.2`: the loader
 refuses to load a bundle whose recorded bitsandbytes version differs from the
 running one, because the packed layout of `Params4bit` is not a stable format.
 
-## Superseded material
+## Superseded and excluded material
 
-| Path | Why it is kept |
+| Path | Status |
 |---|---|
-| `reports/archive/nf4_memory_accuracy_technical_report.md` | earlier interim report, superseded by the five-chapter reports |
-| `archive/notebooks/` | original interactive entry points; the code now lives in `src/` |
+| `archive/notebooks/` | kept: the original interactive entry points; the code now lives in `src/` |
+| `reports/` | kept in the working tree but **not in git**: distributed through the companion Zenodo record, where the write-ups get a DOI and a CC BY 4.0 licence of their own |
+| `exports/nf4/*.pt` | git-ignored: regenerable with `scripts/04`, and loadable only against bitsandbytes 0.50.2 |
+| `checkpoints/*.pt` | git-ignored: inputs from the Engram training run, tracked by `checkpoints/SHA256SUMS` |
+| `reports/archive/nf4_memory_accuracy_technical_report.md` | lost during the git history rewrite that removed `reports/` from version control. It was an interim report superseded by the five-chapter reports, and nothing in the reported results depended on it. |
 
 ## How to check that nothing drifted
 
