@@ -32,13 +32,22 @@ f16c96029bd3c0ea614721049f7d3a7fc7cd5ae470119cdc47de2fd0de2805a1  EngramQwenASR-
 The software archive was verified by extraction into an empty directory and by
 running `scripts/00_check_setup.py` there without the weights present.
 
-`sha256` of the two deposited PDFs, so the record's bytes can be checked against
-the working tree:
+`sha256` of the two PDFs **as deposited**, so the record's bytes can be checked:
 
 ```
 e7188d8a0ff43b3487f4129e3d706c22b003094a61cb6fa8bb4ae3cf7e6db4cb  project_technical_report_en.pdf
 9217ca8862ad3216f4ab77554c2c2241930c09f720ce13c2baadd01ff360712f  project_technical_report_th.pdf
 ```
+
+`sha256` of the same two PDFs **in the working tree**, which are newer — the
+Background section gained an LLM.int8 subsection after the record was published:
+
+```
+2348b41ade2e14d010941fa16fd1cc69c678eda58d76fc13a47b5d977f4d6df6  project_technical_report_en.pdf
+0e5c55ccd772b1702ac0e5cd304c2bca10e098af19343c233467d0182260ccf4  project_technical_report_th.pdf
+```
+
+The English edition is 15 pages either way; the Thai edition went from 16 to 17.
 
 Note that `reports/` is **not** in the GitHub repository: it is git-ignored. It
 used to be distributed through the reports record, but the preprint record now
@@ -304,12 +313,12 @@ relation `is supplement to`, identifier `10.5281/zenodo.<software-id>`
 3. **Done.** The repository is public at
    <https://github.com/ThanabordeeN/Engram-qwenASR>, so both records link to it.
 
-**Accepted drift.** The published software archive was frozen before the README's
-redistribution wording was corrected and before `CITATION.cff` gained
-`repository-code` and the DOIs, so it differs from the working tree in exactly
-those two files. Zenodo cannot replace a file on a published record: the docs say
-files "can only be edited (added, modified or deleted) after publication by
-contacting support".
+**Accepted drift — software archive.** The published software archive was frozen
+before the README's redistribution wording was corrected and before `CITATION.cff`
+gained `repository-code` and the DOIs, so it differs from the working tree in
+exactly those two files. Zenodo cannot replace a file on a published record: the
+docs say files "can only be edited (added, modified or deleted) after publication
+by contacting support".
 
 **Decision: leave it.** No 1.0.1, no support request. The archive's code, results,
 and data match the working tree; only those two documentation files inside the zip
@@ -317,9 +326,18 @@ are older than the repository's. Cite the repository, not the archive, for the
 current wording. If a 1.0.1 is ever cut for another reason, it will pick up both
 files automatically.
 
-The local `sha256` recorded above is therefore the working tree's, not the
+The archive `sha256` recorded above is therefore the working tree's, not the
 published file's; the published one is
 `57c1cc489ef2fcf854e1f0d3bf653a2b81aaa58df57aca34a92c5376d34dfff3`.
+
+**Undecided — preprint PDFs.** Both PDFs were rebuilt after the Background section
+gained its LLM.int8 subsection, so the published preprint predates that change.
+The same file freeze applies. This one is content, not wording: a reader of the
+published preprint will not find the origin of LLM.int8 explained in Background,
+only its configuration in Methodology.
+
+Options, unchanged from the archive case: a 1.0.1 version, a support request, or
+leave it and let the repository carry the corrected PDFs. Not yet decided.
 
 ---
 
