@@ -14,7 +14,8 @@ Rebuild both with `./zenodo/build_archives.sh` (optionally pass a version, e.g.
 `sha256` of the current archives:
 
 ```
-189e0dbc59d02a7d5afdb7691f7940f819ca725a209262a3bbae12fecca84c25  EngramQwenASR-software-v1.0.0.zip
+
+9f01fbbce90deaf8c038dfd06a136ee7c96ee3bc911a2a97f17f950591694032  EngramQwenASR-software-v1.0.0.zip
 77bdff6a975b17639afc5dd2586dad8883403898b1401e1abed3c82412a9e213  EngramQwenASR-technical-reports-v1.0.0.zip
 ```
 
@@ -298,5 +299,7 @@ Deliberately excluded:
 | `results/parts/` | resumable chunk scratch for the LLM.int8 benchmark, superseded once combined |
 | `reports/build/` | LaTeX intermediate files |
 | `reports/archive/nf4_memory_accuracy_technical_report.md` | earlier interim report, superseded by the five-chapter reports |
+| `scripts/09_deposit_zenodo.py` | deposits these records, so it needs `zenodo/METADATA.md` and the two zips; `zenodo/` cannot ship inside the archive whose sha256 it records |
+| `zenodo/deposits.json` | local draft state from `scripts/09` |
 | `.venv/`, `.venv.cuda-backup/`, `__pycache__/` | local environments |
 | the Porjai corpus, Qwen3-ASR-0.6B | third-party resources, fetched at run time |

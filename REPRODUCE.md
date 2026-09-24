@@ -37,11 +37,23 @@ are for the RX 9070 XT and are the reason the order matters.
 | 6 | `python scripts/06_make_tables_figures.py` | 1–5 | `results/summaries/project_f1_scores.json`, `results/tables/project_f1_results_table.csv`, `results/figures/*` | ~10 s |
 | 7 | `python scripts/07_verify_reproduction.py --samples 4` | 1–5 | nothing (test only) | ~5 min |
 | 8 | `python scripts/08_publish_hf.py --stage --verify-samples 4` | checkpoints | `hf/engram_step_000750.pt`, `hf/config.json` | ~6 min |
+| 9 | `python scripts/09_deposit_zenodo.py --dry-run` | `zenodo/METADATA.md`, `zenodo/*.zip` | nothing | seconds |
 
-Step 8 is optional: it rebuilds the Hugging Face delta and checks that it still
-reproduces the in-repo predictions. Add `--upload` to push
-`Thanabordee/Qwen3-ASR-0.6B-Thai-Engram`. It is not needed to reproduce any
-reported number.
+Steps 8 and 9 are release steps, not reproduction steps. Neither is needed to
+reproduce a reported number. Step 9 is not in the software archive: it deposits
+the records, so it needs `zenodo/METADATA.md` and the two zips, and `zenodo/`
+cannot ship inside the archive it describes.
+
+Step 8 rebuilds the Hugging Face delta and checks that it still reproduces the
+in-repo predictions. Add `--upload` to push
+`Thanabordee/Qwen3-ASR-0.6B-Thai-Engram`.
+
+Step 9 is the deposit itself. `--dry-run` needs no credentials and only checks
+that both records still parse out of `zenodo/METADATA.md` and that both archives
+exist. `--create` makes the two drafts and uploads the archives; `--publish`
+mints both DOIs and cross-links them. Both need a Zenodo token in
+`~/.zenodo_token` or `$ZENODO_TOKEN` (`deposit:write`, plus `deposit:actions`
+for `--publish`). Publishing is permanent.
 
 Step 5 can also be run in one pass with
 `python scripts/05_benchmark_llm_int8.py --variant both`, which skips the chunk

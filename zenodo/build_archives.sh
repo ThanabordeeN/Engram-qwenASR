@@ -27,6 +27,10 @@ rm -f "$software" "$reports"
 # --- Record 1: software, results, and the checkpoints ----------------------- #
 # hf/ ships without the generated delta (hf/*.pt): that file is a strip of the
 # checkpoint already archived under checkpoints/, and scripts/08 rebuilds it.
+#
+# scripts/09 is excluded: it deposits the records, so it needs zenodo/METADATA.md
+# and the two zips. zenodo/ cannot ship inside the software archive, because
+# METADATA.md records that archive's own sha256 and would then never match.
 zip -q -r "$software" \
   README.md REPRODUCE.md LICENSE CITATION.cff requirements.txt .gitignore \
   src scripts configs data docs hf \
@@ -34,7 +38,7 @@ zip -q -r "$software" \
   checkpoints \
   archive/notebooks \
   exports/nf4/manifest.json \
-  -x '*/__pycache__/*' '*.pyc' 'hf/*.pt'
+  -x '*/__pycache__/*' '*.pyc' 'hf/*.pt' 'scripts/09_deposit_zenodo.py'
 
 # --- Record 2: the technical reports, with the figures they include --------- #
 # reports/*.tex resolves its figures through \graphicspath{{../../results/figures/}},

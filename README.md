@@ -64,7 +64,8 @@ Zenodo record as PDF plus LuaLaTeX sources, in English and Thai — see
 │   ├── 05_benchmark_llm_int8.py       LLM.int8 quality, memory, latency (chunked)
 │   ├── 06_make_tables_figures.py      F1 table and both figures (CPU only)
 │   ├── 07_verify_reproduction.py      re-run a few clips and compare to the saved artifacts
-│   └── 08_publish_hf.py               rebuild the Hub delta and verify it against the in-repo path
+│   ├── 08_publish_hf.py               rebuild the Hub delta and verify it against the in-repo path
+│   └── 09_deposit_zenodo.py           deposit both Zenodo records parsed out of zenodo/METADATA.md
 │
 ├── hf/                        files uploaded to the Hub (README.md model card + standalone
 │                              engram_loader.py are tracked; the delta and config.json are generated)
