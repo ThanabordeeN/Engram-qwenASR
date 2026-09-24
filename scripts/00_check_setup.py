@@ -19,6 +19,7 @@ from qwen3asr_bench import PREDICTIONS_DIR, SUMMARIES_DIR  # noqa: E402
 from qwen3asr_engram import Config, PROJECT_ROOT  # noqa: E402
 
 EXPECTED_STEPS = [300, 500, 750, 1000]
+ENGRAM_HUB_REPO = "https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram"
 failures: list[str] = []
 
 
@@ -44,6 +45,10 @@ check("configs/eval_300.json parses", True,
       f"{cfg.eval_samples} clips from offset {cfg.eval_source_skip}")
 
 # --- checkpoints ----------------------------------------------------------- #
+# The four .pt files are deliberately NOT redistributed: they live on the
+# Hugging Face Hub, and the Zenodo software archive ships without them. If they
+# are present, verify them against SHA256SUMS; if they are absent, say where to
+# fetch them rather than failing.
 sums_file = PROJECT_ROOT / "checkpoints" / "SHA256SUMS"
 recorded = {}
 if sums_file.is_file():
@@ -51,12 +56,19 @@ if sums_file.is_file():
         if line.strip():
             digest, name = line.split(None, 1)
             recorded[name.strip().lstrip("*")] = digest
+missing_checkpoints = []
 for step, path in cfg.checkpoint_paths().items():
-    exists = path.is_file()
-    check(f"checkpoint step {step} present", exists, path.name)
-    if exists and path.name in recorded:
-        check(f"checkpoint step {step} sha256", sha256(path) == recorded[path.name],
-              "matches SHA256SUMS" if sha256(path) == recorded[path.name] else "MISMATCH")
+    if not path.is_file():
+        missing_checkpoints.append(f"checkpoints/{path.name}")
+        continue
+    check(f"checkpoint step {step} present", True, path.name)
+    if path.name in recorded:
+        ok = sha256(path) == recorded[path.name]
+        check(f"checkpoint step {step} sha256", ok,
+              "matches SHA256SUMS" if ok else "MISMATCH")
+if missing_checkpoints:
+    check("checkpoints/SHA256SUMS present", sums_file.is_file(),
+          "manifest of the weights hosted elsewhere")
 
 # --- frozen evaluation set ------------------------------------------------- #
 manifest_path = PROJECT_ROOT / "data" / "eval_set_300.json"
@@ -96,6 +108,8 @@ for rel in expected:
 # The reports live in the companion Zenodo record; the NF4 .pt bundles are
 # regenerable with scripts/04 and are excluded from the software archive.
 print("\nOptional (companion record or regenerable):")
+for name in missing_checkpoints:
+    print(f"  {name}: absent  — fetch from {ENGRAM_HUB_REPO}")
 for lang in ("en", "th"):
     present = sum((PROJECT_ROOT / f"reports/{lang}" / f"project_technical_report_{lang}.{ext}").is_file()
                   for ext in ("md", "tex", "pdf"))

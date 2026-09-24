@@ -23,6 +23,7 @@ import json
 import os
 import re
 import sys
+import time
 from pathlib import Path
 
 import requests
@@ -148,6 +149,57 @@ def _headers(tok: str) -> dict:
     return {"Authorization": f"Bearer {tok}"}
 
 
+def _assert_fresh(dep: dict, tok: str, num: int) -> None:
+    """Refuse to upload into anything that is not a brand-new empty draft.
+
+    A 502 during an earlier run left a bucket URL in the traceback that belonged
+    to an unrelated, already-published record. The cause was never reproduced,
+    so this check makes that outcome impossible rather than trusting the POST.
+    """
+    if dep.get("submitted") or dep.get("state") != "unsubmitted":
+        raise SystemExit(
+            f"record {num}: POST returned deposition {dep.get('id')} in state "
+            f"{dep.get('state')!r}, not a fresh draft — refusing to touch it"
+        )
+    if dep.get("title"):
+        raise SystemExit(
+            f"record {num}: draft {dep['id']} already has title {dep['title']!r} — refusing"
+        )
+    if dep.get("files"):
+        raise SystemExit(
+            f"record {num}: draft {dep['id']} already has files "
+            f"{[f['filename'] for f in dep['files']]} — refusing"
+        )
+    bucket = dep["links"].get("bucket")
+    if not bucket:
+        raise SystemExit(f"record {num}: draft {dep['id']} has no bucket link")
+    listing = requests.get(bucket, headers=_headers(tok), timeout=120)
+    if listing.status_code == 200 and listing.json().get("contents"):
+        raise SystemExit(
+            f"record {num}: bucket {bucket} is not empty "
+            f"{[c['key'] for c in listing.json()['contents']]} — refusing to upload into it"
+        )
+
+
+def _put_file(url: str, path: Path, tok: str, attempts: int = 4) -> None:
+    """Single-PUT upload with backoff. Zenodo's gateway 502s on long uploads."""
+    last = None
+    for i in range(1, attempts + 1):
+        try:
+            with path.open("rb") as fh:
+                r = requests.put(url, data=fh, headers=_headers(tok), timeout=7200)
+            if r.status_code < 400:
+                return
+            last = f"HTTP {r.status_code}: {r.text[:200]}"
+        except requests.RequestException as exc:
+            last = f"{type(exc).__name__}: {exc}"
+        if i < attempts:
+            wait = 20 * 2 ** (i - 1)
+            print(f"    attempt {i}/{attempts} failed ({last}) — retrying in {wait}s")
+            time.sleep(wait)
+    raise SystemExit(f"upload of {path.name} failed after {attempts} attempts — {last}")
+
+
 def create(tok: str, records: dict[int, dict]) -> dict:
     state = json.loads(STATE.read_text()) if STATE.is_file() else {}
     for num, meta in records.items():
@@ -160,13 +212,13 @@ def create(tok: str, records: dict[int, dict]) -> dict:
         r.raise_for_status()
         dep = r.json()
         dep_id = dep["id"]
+        _assert_fresh(dep, tok, num)
 
         path = records[num]["_file"]
-        with path.open("rb") as fh:
-            up = requests.put(f"{dep['links']['bucket']}/{path.name}", data=fh,
-                              headers=_headers(tok), timeout=3600)
-        up.raise_for_status()
-        print(f"record {num}: uploaded {path.name} ({path.stat().st_size/2**20:.1f} MiB)")
+        print(f"record {num}: draft {dep_id}, uploading {path.name} "
+              f"({path.stat().st_size/2**20:.1f} MiB)...")
+        _put_file(f"{dep['links']['bucket']}/{path.name}", path, tok)
+        print(f"record {num}: uploaded {path.name}")
 
         r = requests.put(f"{API}/deposit/depositions/{dep_id}", json={"metadata": meta},
                          headers=_headers(tok), timeout=120)

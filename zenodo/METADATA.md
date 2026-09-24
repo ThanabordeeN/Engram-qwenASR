@@ -5,8 +5,12 @@ Audio-Laya deposit: software and technical reports.
 
 | File | Record | Licence | Size |
 |---|---|---|---|
-| `EngramQwenASR-software-v1.0.0.zip` | Software | MIT | 333 MB |
-| `EngramQwenASR-technical-reports-v1.0.0.zip` | Publication / Report | CC BY 4.0 | 812 KB |
+| `EngramQwenASR-software-v1.0.0.zip` | Software | MIT | ~1.5 MB |
+| `EngramQwenASR-technical-reports-v1.0.0.zip` | Publication / Preprint | CC BY 4.0 | 856 KB |
+
+The Engram weights are in neither archive. They are hosted on the Hugging Face
+Hub at <https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram>, and
+`checkpoints/SHA256SUMS` inside the software archive identifies them.
 
 Rebuild both with `./zenodo/build_archives.sh` (optionally pass a version, e.g.
 `./zenodo/build_archives.sh 1.0.1`).
@@ -15,7 +19,7 @@ Rebuild both with `./zenodo/build_archives.sh` (optionally pass a version, e.g.
 
 ```
 
-9f01fbbce90deaf8c038dfd06a136ee7c96ee3bc911a2a97f17f950591694032  EngramQwenASR-software-v1.0.0.zip
+5487903b483cfa24a3c19e2d986d3e5bc67e736068eb13b08f729e800bdfe0fc  EngramQwenASR-software-v1.0.0.zip
 77bdff6a975b17639afc5dd2586dad8883403898b1401e1abed3c82412a9e213  EngramQwenASR-technical-reports-v1.0.0.zip
 ```
 
@@ -37,20 +41,21 @@ before rebuilding the deposit.
 
 ## Read this before you publish
 
-**1. Checkpoint licensing — decided, weights already public.** The Engram
-checkpoints are trained on `CMKL/Porjai-Thai-voice-dataset-central`, which is
-licensed **CC BY-SA 4.0**, so share-alike terms may attach to the derived weights.
+**1. Checkpoint licensing — decided, and the weights are not in this deposit.**
+The Engram checkpoints are trained on
+`CMKL/Porjai-Thai-voice-dataset-central`, which is licensed **CC BY-SA 4.0**, so
+share-alike terms may attach to the derived weights.
 
 The decision taken was to publish them under **CC BY-SA 4.0**, with the corpus
-credited explicitly. The delta is already public at
-<https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram>, so the question
-is settled as far as this deposit is concerned — the Zenodo archive cannot be
-more restrictive than the Hub copy without contradicting it.
+credited explicitly, and to host them **only** on the Hugging Face Hub at
+<https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram>. They are
+redundant here: the Hub copy is the same weights, it is already public, and
+shipping them again would add about 348 MB to a deposit whose code and results
+are 1.5 MB. `checkpoints/SHA256SUMS` travels in the archive so the weights stay
+identified and verifiable without being duplicated.
 
-The remaining alternative, if that call is ever revisited: drop `checkpoints/`
-from the software archive and publish code + results only (about 1.5 MB).
-Reproduction then needs the checkpoints from elsewhere, and
-`scripts/00_check_setup.py` will say so.
+This also removes the licence question from the deposit itself: the archive
+contains no derived weights, only MIT code and the results.
 
 **2. Publishing is permanent.** Zenodo mints a DOI on publish; a record cannot be
 deleted, only superseded by a new version. Check the preview carefully.
@@ -127,16 +132,22 @@ Reported results, with the limits that apply to each:
 
 What this deposit contains: the library extracted from the original evaluation
 notebook, one numbered script per reported result, the frozen evaluation-set
-manifest with a sha256 over its reference list, the four Engram checkpoints with
-SHA256SUMS, and every per-sample prediction, summary table, and figure behind the
-reported numbers.
+manifest with a sha256 over its reference list, `checkpoints/SHA256SUMS` as the
+manifest of the weights, and every per-sample prediction, summary table, and
+figure behind the reported numbers.
+
+The Engram weights themselves are not redistributed here. They are hosted on the
+Hugging Face Hub at Thanabordee/Qwen3-ASR-0.6B-Thai-Engram, and
+`checkpoints/SHA256SUMS` records what they should hash to. Nothing is withheld:
+the weights are public at that address, and keeping them out of this archive
+avoids duplicating 348 MB.
 
 Reproducibility is partial, not bitwise. The dataset is streamed rather than
 pinned to a revision, so the frozen reference list is the contract: each script
 re-checks its streamed clips against data/eval_set_300.json and fails if the
 upstream data changed. The Engram training loop is not included; the checkpoints
-are inputs. Quantized GGUF inference is out of scope, and no number here comes
-from llama.cpp.
+are inputs, fetched from the Hugging Face Hub. Quantized GGUF inference is out of
+scope, and no number here comes from llama.cpp.
 
 Checks that ship with the deposit: scripts/00_check_setup.py verifies files,
 checkpoint checksums, and the frozen set without a GPU; scripts/07_verify_reproduction.py
@@ -179,8 +190,7 @@ a strict subset of this archive.
 
 ## Record 2 — Reports
 
-**Upload type:** Publication → Report (or Preprint, if your institution treats it
-that way)
+**Upload type:** Publication → Preprint
 **Access right:** Open Access
 **Licence:** Creative Commons Attribution 4.0 International
 **Version:** 1.0.0
@@ -203,8 +213,9 @@ ORCID: 0009-0004-9410-9839
 **Description**
 
 ```
-Technical report, version 1.0.0, in English and Thai. Both editions are included
-as PDF with their LuaLaTeX sources and the figures they include.
+Technical report, version 1.0.0, in English and Thai, deposited as a preprint.
+Both editions are included as PDF with their LuaLaTeX sources and the figures
+they include.
 
 The report asks whether a token-level N-gram memory (Engram) reduces Thai
 transcription errors when added to a frozen Qwen3-ASR-0.6B, and what three
@@ -280,11 +291,12 @@ relation `is supplement to`, identifier `10.5281/zenodo.<software-id>`
 ## What is in each archive, and what is not
 
 **Software archive** — `README.md`, `REPRODUCE.md`, `LICENSE`, `CITATION.cff`,
-`requirements.txt`, `.gitignore`, `src/`, `scripts/`, `configs/`, `data/`,
-`docs/`, `hf/` (model card, standalone loader, generated config — but not the
-33 MB generated delta, which `scripts/08_publish_hf.py` rebuilds from
-`checkpoints/`), `results/{predictions,summaries,tables,figures}/`,
-`checkpoints/`, `archive/notebooks/`, and `exports/nf4/manifest.json`.
+`requirements.txt`, `.gitignore`, `src/`, `scripts/` (except `09`, see below),
+`configs/`, `data/`, `docs/`, `hf/` (model card, standalone loader, generated
+config — but not the generated delta, which `scripts/08_publish_hf.py`
+rebuilds), `results/{predictions,summaries,tables,figures}/`,
+`checkpoints/SHA256SUMS` and `checkpoints/latest.json` (**not** the `.pt`
+weights), `archive/notebooks/`, and `exports/nf4/manifest.json`.
 
 **Reports archive** — `reports/{en,th}/` (Markdown, LaTeX, and PDF) and
 `reports/LICENSE.md`, plus `results/figures/` so the LaTeX sources compile from a

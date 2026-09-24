@@ -4,12 +4,17 @@
 #   ./zenodo/build_archives.sh
 #
 # Writes:
-#   zenodo/EngramQwenASR-software-v1.0.0.zip           code, results, checkpoints  (MIT)
+#   zenodo/EngramQwenASR-software-v1.0.0.zip           code + results            (MIT)
 #   zenodo/EngramQwenASR-technical-reports-v1.0.0.zip  EN + TH reports            (CC BY 4.0)
 #
-# The archives are built from the working tree, not from git, because the four
-# Engram checkpoints are inputs that .gitignore excludes on purpose. Everything
-# else that is excluded here is excluded deliberately; see zenodo/METADATA.md.
+# The Engram weights are not in either archive. They are hosted on the Hugging
+# Face Hub at Thanabordee/Qwen3-ASR-0.6B-Thai-Engram and identified here by
+# checkpoints/SHA256SUMS.
+#
+# The archives are built from the working tree, not from git, because
+# checkpoints/SHA256SUMS is present while the weights it describes are not.
+# Everything else that is excluded here is excluded deliberately; see
+# zenodo/METADATA.md.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -24,9 +29,14 @@ software="$OUT/EngramQwenASR-software-v$VERSION.zip"
 reports="$OUT/EngramQwenASR-technical-reports-v$VERSION.zip"
 rm -f "$software" "$reports"
 
-# --- Record 1: software, results, and the checkpoints ----------------------- #
+# --- Record 1: software, results, and the code ----------------------------- #
+# The four Engram checkpoints are NOT in this archive. They are hosted on the
+# Hugging Face Hub; checkpoints/SHA256SUMS ships instead, as the manifest of
+# what those weights are. Including them would add 348 MB of duplicated weights
+# and make the deposit impossible to re-upload on a slow link.
+#
 # hf/ ships without the generated delta (hf/*.pt): that file is a strip of the
-# checkpoint already archived under checkpoints/, and scripts/08 rebuilds it.
+# step-750 checkpoint and scripts/08 rebuilds it from whatever it fetches.
 #
 # scripts/09 is excluded: it deposits the records, so it needs zenodo/METADATA.md
 # and the two zips. zenodo/ cannot ship inside the software archive, because
@@ -35,7 +45,7 @@ zip -q -r "$software" \
   README.md REPRODUCE.md LICENSE CITATION.cff requirements.txt .gitignore \
   src scripts configs data docs hf \
   results/predictions results/summaries results/tables results/figures \
-  checkpoints \
+  checkpoints/SHA256SUMS checkpoints/latest.json \
   archive/notebooks \
   exports/nf4/manifest.json \
   -x '*/__pycache__/*' '*.pyc' 'hf/*.pt' 'scripts/09_deposit_zenodo.py'
