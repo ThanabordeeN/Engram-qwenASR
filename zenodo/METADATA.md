@@ -5,37 +5,41 @@ Audio-Laya deposit: software and technical reports.
 
 | File | Record | Licence | Size |
 |---|---|---|---|
-| `EngramQwenASR-software-v1.0.0.zip` | Software | MIT | ~1.5 MB |
-| `EngramQwenASR-technical-reports-v1.0.0.zip` | Publication / Preprint | CC BY 4.0 | 856 KB |
+| `EngramQwenASR-software-v1.0.0.zip` | Software | MIT | ~932 KB |
+| `project_technical_report_en.pdf` | Publication / Preprint | CC BY 4.0 | 186 KB |
+| `project_technical_report_th.pdf` | Publication / Preprint | CC BY 4.0 | 215 KB |
+
+The preprint record carries the two PDFs **directly, not zipped**. Zenodo renders
+an inline preview for a PDF — a `preview-iframe` plus a IIIF canvas — and shows
+nothing at all for a zip. A preprint is read, not unpacked, so the LaTeX sources,
+the Markdown, and the figures they include are not deposited; they stay in the
+working tree under `reports/`.
 
 The Engram weights are in neither archive. They are hosted on the Hugging Face
 Hub at <https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram>, and
 `checkpoints/SHA256SUMS` inside the software archive identifies them.
 
-Rebuild both with `./zenodo/build_archives.sh` (optionally pass a version, e.g.
-`./zenodo/build_archives.sh 1.0.1`).
+Rebuild the software archive with `./zenodo/build_archives.sh` (optionally pass a
+version, e.g. `./zenodo/build_archives.sh 1.0.1`). The script still builds the
+reports zip as a local copy of the LaTeX sources, but nothing uploads it.
 
-`sha256` of the current archives:
+`sha256` of the software archive:
 
 ```
-
 5487903b483cfa24a3c19e2d986d3e5bc67e736068eb13b08f729e800bdfe0fc  EngramQwenASR-software-v1.0.0.zip
-77bdff6a975b17639afc5dd2586dad8883403898b1401e1abed3c82412a9e213  EngramQwenASR-technical-reports-v1.0.0.zip
 ```
 
-The reports archive is byte-identical to the previously recorded build; only the
-software archive changed, because `hf/`, `scripts/08_publish_hf.py`, and the
-documentation edits were added to it.
+The software archive was verified by extraction into an empty directory and by
+running `scripts/00_check_setup.py` there without the weights present. The two
+PDFs are deposited exactly as built under `reports/`, so their hashes are the
+working-tree hashes recorded by `reports/` itself.
 
-Both archives were verified by extraction into an empty directory: the reports
-archive compiles with LuaLaTeX on its own (15 pages English, 16 Thai, no
-undefined references), and the software archive passes `scripts/00_check_setup.py`
-without the companion record present.
-
-Note that `reports/` is **not** in the GitHub repository — it is git-ignored and
-distributed only through the reports record. `zenodo/build_archives.sh` reads it
-from the working tree, so keep a local copy or re-extract the reports archive
-before rebuilding the deposit.
+Note that `reports/` is **not** in the GitHub repository: it is git-ignored. It
+used to be distributed through the reports record, but the preprint record now
+holds only the two PDFs, so the working tree is the only copy of the LaTeX
+sources and the Markdown. Keep it backed up. `zenodo/build_archives.sh` reads it
+from the working tree, and `scripts/09_deposit_zenodo.py` reads the two PDFs from
+it at deposit time.
 
 ---
 
@@ -214,8 +218,7 @@ ORCID: 0009-0004-9410-9839
 
 ```
 Technical report, version 1.0.0, in English and Thai, deposited as a preprint.
-Both editions are included as PDF with their LuaLaTeX sources and the figures
-they include.
+Both editions are included as PDF, in full, one file per language.
 
 The report asks whether a token-level N-gram memory (Engram) reduces Thai
 transcription errors when added to a frozen Qwen3-ASR-0.6B, and what three
@@ -298,10 +301,13 @@ rebuilds), `results/{predictions,summaries,tables,figures}/`,
 `checkpoints/SHA256SUMS` and `checkpoints/latest.json` (**not** the `.pt`
 weights), `archive/notebooks/`, and `exports/nf4/manifest.json`.
 
-**Reports archive** — `reports/{en,th}/` (Markdown, LaTeX, and PDF) and
-`reports/LICENSE.md`, plus `results/figures/` so the LaTeX sources compile from a
-fresh extraction. The relative layout is preserved because the `.tex` files
-resolve figures through `\graphicspath{{../../results/figures/}}`.
+**Reports archive** — not deposited. The preprint record holds the two PDFs
+only. `reports/{en,th}/` (Markdown, LaTeX, and PDF) and `reports/LICENSE.md`
+remain in the working tree, and `./zenodo/build_archives.sh` still packages them
+with `results/figures/` into `zenodo/EngramQwenASR-technical-reports-v1.0.0.zip`
+as a local copy of the sources, but nothing uploads that zip. The relative
+layout is preserved inside it because the `.tex` files resolve figures through
+`\graphicspath{{../../results/figures/}}`.
 
 Deliberately excluded:
 

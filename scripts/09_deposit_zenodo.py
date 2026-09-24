@@ -46,9 +46,16 @@ PUBLICATION_TYPES = {"Report": "report", "Preprint": "preprint", "Article": "art
 ACCESS_RIGHTS = {"Open Access": "open", "Restricted": "restricted", "Closed": "closed"}
 LANGUAGES = {"English": "eng", "Thai": "tha"}
 
+# Files deposited per record, relative to the project root.
+#
+# Record 2 carries the two PDFs directly, NOT a zip: Zenodo renders an inline
+# preview for a PDF (preview-iframe + a IIIF canvas) and shows nothing at all
+# for a zip, and a preprint is read, not unpacked. The LaTeX sources and the
+# figures they include stay in the working tree; see zenodo/METADATA.md.
 RECORD_FILES = {
-    1: "EngramQwenASR-software-v1.0.0.zip",
-    2: "EngramQwenASR-technical-reports-v1.0.0.zip",
+    1: ["zenodo/EngramQwenASR-software-v1.0.0.zip"],
+    2: ["reports/en/project_technical_report_en.pdf",
+        "reports/th/project_technical_report_th.pdf"],
 }
 
 
@@ -138,11 +145,17 @@ def parse_records() -> dict[int, dict]:
 
 
 def check_files(records: dict[int, dict]) -> None:
-    for num, name in RECORD_FILES.items():
-        path = PROJECT_ROOT / "zenodo" / name
-        if not path.is_file():
-            raise FileNotFoundError(f"{path} — run ./zenodo/build_archives.sh first")
-        records[num]["_file"] = path
+    for num, rels in RECORD_FILES.items():
+        paths = []
+        for rel in rels:
+            path = PROJECT_ROOT / rel
+            if not path.is_file():
+                raise FileNotFoundError(
+                    f"{path} — for record {num}"
+                    + ("\n  run ./zenodo/build_archives.sh first" if num == 1 else "")
+                )
+            paths.append(path)
+        records[num]["_files"] = paths
 
 
 def _headers(tok: str) -> dict:
@@ -200,32 +213,65 @@ def _put_file(url: str, path: Path, tok: str, attempts: int = 4) -> None:
     raise SystemExit(f"upload of {path.name} failed after {attempts} attempts — {last}")
 
 
+def _sync_files(dep: dict, tok: str, paths: list[Path], num: int) -> None:
+    """Make the draft's file list match ``paths``: drop extras, upload missing."""
+    want = {p.name for p in paths}
+    for f in dep.get("files", []):
+        if f["filename"] in want:
+            continue
+        r = requests.delete(
+            f"{API}/deposit/depositions/{dep['id']}/files/{f['id']}",
+            headers=_headers(tok), timeout=120,
+        )
+        if r.status_code >= 400:
+            raise SystemExit(f"record {num}: could not remove {f['filename']}\n{r.text}")
+        print(f"record {num}: removed {f['filename']}")
+
+    have = {f["filename"] for f in dep.get("files", [])}
+    for path in paths:
+        if path.name in have:
+            print(f"record {num}: {path.name} already uploaded "
+                  f"({path.stat().st_size/2**20:.2f} MiB)")
+            continue
+        print(f"record {num}: uploading {path.name} ({path.stat().st_size/2**20:.2f} MiB)...")
+        _put_file(f"{dep['links']['bucket']}/{path.name}", path, tok)
+        print(f"record {num}: uploaded {path.name}")
+
+
 def create(tok: str, records: dict[int, dict]) -> dict:
     state = json.loads(STATE.read_text()) if STATE.is_file() else {}
     for num, meta in records.items():
         key = str(num)
+        paths = records[num]["_files"]
+
         if key in state:
-            print(f"record {num}: draft {state[key]['id']} already exists — skipping create")
-            continue
-        meta = {k: v for k, v in meta.items() if not k.startswith("_")}
-        r = requests.post(f"{API}/deposit/depositions", json={}, headers=_headers(tok), timeout=120)
-        r.raise_for_status()
-        dep = r.json()
-        dep_id = dep["id"]
-        _assert_fresh(dep, tok, num)
+            dep = requests.get(f"{API}/deposit/depositions/{state[key]['id']}",
+                               headers=_headers(tok), timeout=120).json()
+            if dep.get("submitted"):
+                raise SystemExit(
+                    f"record {num}: draft {dep['id']} is already published "
+                    f"({dep.get('doi')}) — nothing to update here"
+                )
+            print(f"record {num}: reusing draft {dep['id']}")
+        else:
+            r = requests.post(f"{API}/deposit/depositions", json={}, headers=_headers(tok), timeout=120)
+            r.raise_for_status()
+            dep = r.json()
+            # Only a brand-new draft must be empty; a reused one already has files.
+            _assert_fresh(dep, tok, num)
+            print(f"record {num}: draft {dep['id']}")
 
-        path = records[num]["_file"]
-        print(f"record {num}: draft {dep_id}, uploading {path.name} "
-              f"({path.stat().st_size/2**20:.1f} MiB)...")
-        _put_file(f"{dep['links']['bucket']}/{path.name}", path, tok)
-        print(f"record {num}: uploaded {path.name}")
+        _sync_files(dep, tok, paths, num)
 
-        r = requests.put(f"{API}/deposit/depositions/{dep_id}", json={"metadata": meta},
+        clean = {k: v for k, v in meta.items() if not k.startswith("_")}
+        r = requests.put(f"{API}/deposit/depositions/{dep['id']}", json={"metadata": clean},
                          headers=_headers(tok), timeout=120)
         if r.status_code >= 400:
             raise SystemExit(f"record {num}: metadata rejected ({r.status_code})\n{r.text}")
-        state[key] = {"id": dep_id, "file": path.name, "html": dep["links"]["html"]}
+        state[key] = {"id": dep["id"], "files": [p.name for p in paths],
+                      "html": dep["links"]["html"]}
         print(f"record {num}: metadata set — review at {dep['links']['html']}")
+
     STATE.write_text(json.dumps(state, indent=2) + "\n")
     print(f"\ndrafts recorded in {STATE.relative_to(PROJECT_ROOT)}")
     print("Review both in the web UI, then re-run with --publish.")
@@ -276,10 +322,12 @@ def dry_run(records: dict[int, dict]) -> None:
     check_files(records)
     for num, meta in records.items():
         clean = {k: v for k, v in meta.items() if not k.startswith("_")}
-        print(f"=== Record {num} — {RECORD_FILES[num]} ===")
+        print(f"=== Record {num} ===")
+        for p in records[num]["_files"]:
+            print(f"  file: {p.relative_to(PROJECT_ROOT)}  ({p.stat().st_size/1024:.1f} KB)")
         print(json.dumps(clean, indent=2, ensure_ascii=False))
         print()
-    print("dry run OK: both records parsed, both archives present")
+    print("dry run OK: both records parsed, all deposit files present")
 
 
 def main() -> None:
