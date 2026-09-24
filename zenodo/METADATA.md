@@ -304,13 +304,22 @@ relation `is supplement to`, identifier `10.5281/zenodo.<software-id>`
 3. **Done.** The repository is public at
    <https://github.com/ThanabordeeN/Engram-qwenASR>, so both records link to it.
 
-**Open item.** The published software archive was frozen before the README's
+**Accepted drift.** The published software archive was frozen before the README's
 redistribution wording was corrected and before `CITATION.cff` gained
 `repository-code` and the DOIs, so it differs from the working tree in exactly
-those two files. Zenodo cannot replace a file on a published record: the docs
-say files "can only be edited (added, modified or deleted) after publication by
-contacting support". Fixing it needs either a support request or a 1.0.1 version.
-The archive's code, results, and data are unaffected.
+those two files. Zenodo cannot replace a file on a published record: the docs say
+files "can only be edited (added, modified or deleted) after publication by
+contacting support".
+
+**Decision: leave it.** No 1.0.1, no support request. The archive's code, results,
+and data match the working tree; only those two documentation files inside the zip
+are older than the repository's. Cite the repository, not the archive, for the
+current wording. If a 1.0.1 is ever cut for another reason, it will pick up both
+files automatically.
+
+The local `sha256` recorded above is therefore the working tree's, not the
+published file's; the published one is
+`57c1cc489ef2fcf854e1f0d3bf653a2b81aaa58df57aca34a92c5376d34dfff3`.
 
 ---
 
