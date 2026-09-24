@@ -19,6 +19,7 @@ which can be deleted from the web UI.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -213,26 +214,53 @@ def _put_file(url: str, path: Path, tok: str, attempts: int = 4) -> None:
     raise SystemExit(f"upload of {path.name} failed after {attempts} attempts — {last}")
 
 
+def _md5(path: Path) -> str:
+    digest = hashlib.md5()
+    with path.open("rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def _sync_files(dep: dict, tok: str, paths: list[Path], num: int) -> None:
-    """Make the draft's file list match ``paths``: drop extras, upload missing."""
+    """Make the draft's file list match ``paths``: drop extras, upload missing.
+
+    A file that is present but whose checksum differs is replaced, not skipped:
+    rebuilding the archive after any change to a file it contains produces the
+    same filename with different bytes, and Zenodo's checksum is the only way to
+    notice that.
+    """
+    by_name = {f["filename"]: f for f in dep.get("files", [])}
     want = {p.name for p in paths}
-    for f in dep.get("files", []):
-        if f["filename"] in want:
+
+    for name, f in by_name.items():
+        if name in want:
             continue
         r = requests.delete(
             f"{API}/deposit/depositions/{dep['id']}/files/{f['id']}",
             headers=_headers(tok), timeout=120,
         )
         if r.status_code >= 400:
-            raise SystemExit(f"record {num}: could not remove {f['filename']}\n{r.text}")
-        print(f"record {num}: removed {f['filename']}")
+            raise SystemExit(f"record {num}: could not remove {name}\n{r.text}")
+        print(f"record {num}: removed {name}")
 
-    have = {f["filename"] for f in dep.get("files", [])}
     for path in paths:
-        if path.name in have:
-            print(f"record {num}: {path.name} already uploaded "
-                  f"({path.stat().st_size/2**20:.2f} MiB)")
-            continue
+        existing = by_name.get(path.name)
+        if existing is not None:
+            remote = str(existing.get("checksum", "")).split(":")[-1]
+            local = _md5(path)
+            if remote == local:
+                print(f"record {num}: {path.name} already uploaded, checksum matches")
+                continue
+            print(f"record {num}: {path.name} changed on disk (md5 {remote[:8]} -> {local[:8]}), "
+                  f"replacing")
+            r = requests.delete(
+                f"{API}/deposit/depositions/{dep['id']}/files/{existing['id']}",
+                headers=_headers(tok), timeout=120,
+            )
+            if r.status_code >= 400:
+                raise SystemExit(f"record {num}: could not replace {path.name}\n{r.text}")
+
         print(f"record {num}: uploading {path.name} ({path.stat().st_size/2**20:.2f} MiB)...")
         _put_file(f"{dep['links']['bucket']}/{path.name}", path, tok)
         print(f"record {num}: uploaded {path.name}")
