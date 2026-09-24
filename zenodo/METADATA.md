@@ -26,13 +26,19 @@ reports zip as a local copy of the LaTeX sources, but nothing uploads it.
 `sha256` of the software archive:
 
 ```
-43645a76653845569c4993d969379c7dec07f59d0430c54a47b2e731f6950004  EngramQwenASR-software-v1.0.0.zip
+57c1cc489ef2fcf854e1f0d3bf653a2b81aaa58df57aca34a92c5376d34dfff3  EngramQwenASR-software-v1.0.0.zip
 ```
 
 The software archive was verified by extraction into an empty directory and by
-running `scripts/00_check_setup.py` there without the weights present. The two
-PDFs are deposited exactly as built under `reports/`, so their hashes are the
-working-tree hashes recorded by `reports/` itself.
+running `scripts/00_check_setup.py` there without the weights present.
+
+`sha256` of the two deposited PDFs, so the record's bytes can be checked against
+the working tree:
+
+```
+e7188d8a0ff43b3487f4129e3d706c22b003094a61cb6fa8bb4ae3cf7e6db4cb  project_technical_report_en.pdf
+9217ca8862ad3216f4ab77554c2c2241930c09f720ce13c2baadd01ff360712f  project_technical_report_th.pdf
+```
 
 Note that `reports/` is **not** in the GitHub repository: it is git-ignored. It
 used to be distributed through the reports record, but the preprint record now

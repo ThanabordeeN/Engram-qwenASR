@@ -68,11 +68,11 @@ or a different bitsandbytes build may still change results.
 
 ## 2. Rebuild the reports (optional)
 
-The reports are **not** in this repository. They ship in the companion Zenodo
-record as PDF plus LuaLaTeX sources in English and Thai — see
-[`zenodo/METADATA.md`](zenodo/METADATA.md). Extract that archive and you get
-`reports/{en,th}/` alongside `results/figures/`, which is the layout the `.tex`
-files expect.
+The reports are **not** in this repository. The companion Zenodo preprint record
+carries the two PDFs, one per language, and nothing else — see
+[`zenodo/METADATA.md`](zenodo/METADATA.md). The Markdown, the LuaLaTeX sources,
+and the figures they include stay in the working tree under `reports/`; they are
+git-ignored, so that tree is their only copy.
 
 The PDFs are built with LuaLaTeX, needed for Thai script. Figures resolve through
 `\graphicspath{{../../results/figures/}}`, so build from `reports/build/`:
