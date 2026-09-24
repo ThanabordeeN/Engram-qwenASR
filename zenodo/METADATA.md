@@ -14,9 +14,13 @@ Rebuild both with `./zenodo/build_archives.sh` (optionally pass a version, e.g.
 `sha256` of the current archives:
 
 ```
-98fb576e41a2c192bbe2a5d5d82b18193abe32d53e62d7a5219393a0b0210de5  EngramQwenASR-software-v1.0.0.zip
+189e0dbc59d02a7d5afdb7691f7940f819ca725a209262a3bbae12fecca84c25  EngramQwenASR-software-v1.0.0.zip
 77bdff6a975b17639afc5dd2586dad8883403898b1401e1abed3c82412a9e213  EngramQwenASR-technical-reports-v1.0.0.zip
 ```
+
+The reports archive is byte-identical to the previously recorded build; only the
+software archive changed, because `hf/`, `scripts/08_publish_hf.py`, and the
+documentation edits were added to it.
 
 Both archives were verified by extraction into an empty directory: the reports
 archive compiles with LuaLaTeX on its own (15 pages English, 16 Thai, no
@@ -32,17 +36,20 @@ before rebuilding the deposit.
 
 ## Read this before you publish
 
-**1. Checkpoint licensing.** The Engram checkpoints are trained on
-`CMKL/Porjai-Thai-voice-dataset-central`, which is licensed **CC BY-SA 4.0**.
-Share-alike terms may attach to derived weights. Publishing the checkpoints makes
-them downloadable by anyone, so confirm the position with the dataset owners
-(CMKL University) first. Two safe alternatives if you would rather not wait:
+**1. Checkpoint licensing — decided, weights already public.** The Engram
+checkpoints are trained on `CMKL/Porjai-Thai-voice-dataset-central`, which is
+licensed **CC BY-SA 4.0**, so share-alike terms may attach to the derived weights.
 
-* drop `checkpoints/` from the software archive and publish code + results only
-  (about 1.5 MB). Reproduction then needs the checkpoints from elsewhere, and
-  `scripts/00_check_setup.py` will say so.
-* publish the software record now and add the checkpoints in a new version once
-  the licence question is settled. Zenodo versioning keeps the DOI stable.
+The decision taken was to publish them under **CC BY-SA 4.0**, with the corpus
+credited explicitly. The delta is already public at
+<https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram>, so the question
+is settled as far as this deposit is concerned — the Zenodo archive cannot be
+more restrictive than the Hub copy without contradicting it.
+
+The remaining alternative, if that call is ever revisited: drop `checkpoints/`
+from the software archive and publish code + results only (about 1.5 MB).
+Reproduction then needs the checkpoints from elsewhere, and
+`scripts/00_check_setup.py` will say so.
 
 **2. Publishing is permanent.** Zenodo mints a DOI on publish; a record cannot be
 deleted, only superseded by a new version. Check the preview carefully.
@@ -161,6 +168,12 @@ reproducibility
 **Related works** — add after the reports record exists:
 relation `is supplemented by`, identifier `10.5281/zenodo.<reports-id>`
 
+**Alternate location** — the trained Engram delta alone, as a Hugging Face model
+repository: <https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram>.
+If Zenodo offers it, use the relation `is supplemented by`; otherwise put the URL
+in the description. The Hub copy is the delta plus a standalone loader, so it is
+a strict subset of this archive.
+
 ---
 
 ## Record 2 — Reports
@@ -267,8 +280,10 @@ relation `is supplement to`, identifier `10.5281/zenodo.<software-id>`
 
 **Software archive** — `README.md`, `REPRODUCE.md`, `LICENSE`, `CITATION.cff`,
 `requirements.txt`, `.gitignore`, `src/`, `scripts/`, `configs/`, `data/`,
-`docs/`, `results/{predictions,summaries,tables,figures}/`, `checkpoints/`,
-`archive/notebooks/`, and `exports/nf4/manifest.json`.
+`docs/`, `hf/` (model card, standalone loader, generated config — but not the
+33 MB generated delta, which `scripts/08_publish_hf.py` rebuilds from
+`checkpoints/`), `results/{predictions,summaries,tables,figures}/`,
+`checkpoints/`, `archive/notebooks/`, and `exports/nf4/manifest.json`.
 
 **Reports archive** — `reports/{en,th}/` (Markdown, LaTeX, and PDF) and
 `reports/LICENSE.md`, plus `results/figures/` so the LaTeX sources compile from a

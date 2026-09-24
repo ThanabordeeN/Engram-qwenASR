@@ -63,7 +63,11 @@ Zenodo record as PDF plus LuaLaTeX sources, in English and Thai — see
 │   ├── 04_export_eval_nf4.py          NF4 export + reload validation
 │   ├── 05_benchmark_llm_int8.py       LLM.int8 quality, memory, latency (chunked)
 │   ├── 06_make_tables_figures.py      F1 table and both figures (CPU only)
-│   └── 07_verify_reproduction.py      re-run a few clips and compare to the saved artifacts
+│   ├── 07_verify_reproduction.py      re-run a few clips and compare to the saved artifacts
+│   └── 08_publish_hf.py               rebuild the Hub delta and verify it against the in-repo path
+│
+├── hf/                        files uploaded to the Hub (README.md model card + standalone
+│                              engram_loader.py are tracked; the delta and config.json are generated)
 │
 ├── checkpoints/               Engram step checkpoints + SHA256SUMS
 ├── exports/nf4/               exported NF4 bundles + manifest + processor assets
@@ -132,6 +136,9 @@ PyTorch/ROCm through bitsandbytes, not from llama.cpp.
 
 * **Code, configuration, and result artifacts:** MIT — see [`LICENSE`](LICENSE).
 * **Technical reports** (in the companion Zenodo record, not here): CC BY 4.0.
+* **The trained Engram delta:** CC BY-SA 4.0, published at
+  [Thanabordee/Qwen3-ASR-0.6B-Thai-Engram](https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram).
+  `scripts/08_publish_hf.py` rebuilds and re-verifies that artifact.
 
 Data and models used, **not redistributed here**:
 
@@ -147,11 +154,12 @@ Suwanbandit et al., *Thai Dialect Corpus and Transfer-based Curriculum Learning
 Investigation for Dialect Automatic Speech Recognition*, INTERSPEECH 2023
 ([doi](https://doi.org/10.21437/Interspeech.2023-1828)).
 
-> **Licence caveat for the Engram checkpoints.** The checkpoints in
-> `checkpoints/` are trained on a CC BY-SA 4.0 corpus. Share-alike terms may
-> attach to derived weights, so confirm the position with the dataset owners
-> before publishing the checkpoints in a Zenodo deposit or elsewhere. The
-> dataset itself is never redistributed here.
+> **Licence note for the Engram checkpoints.** The checkpoints in
+> `checkpoints/` are trained on a CC BY-SA 4.0 corpus, so share-alike terms may
+> attach to the derived weights. They are released under **CC BY-SA 4.0**, with
+> the corpus credited; the delta alone is public on the
+> [Hugging Face Hub](https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram).
+> The dataset itself is never redistributed here.
 
 ## Citation
 

@@ -12,6 +12,10 @@ checkpoints/*.pt
 exports/nf4/*.pt
 exports/nf4/*.pt.tmp
 
+# Hugging Face upload staging: rebuilt by scripts/08_publish_hf.py --stage.
+hf/*.pt
+hf/config.json
+
 # Resumable chunk records for the LLM.int8 benchmark.
 results/parts/
 

@@ -36,6 +36,12 @@ are for the RX 9070 XT and are the reason the order matters.
 | 5 | `python scripts/05_benchmark_llm_int8.py --start 0 --limit 75` (repeat for 75, 150, 225) then `--combine` | 1 | `results/parts/llm_int8/*`, `results/predictions/*_llm_int8_w8_predictions.json`, `results/summaries/step750_llm_int8_memory_latency.json` | ~45 min |
 | 6 | `python scripts/06_make_tables_figures.py` | 1–5 | `results/summaries/project_f1_scores.json`, `results/tables/project_f1_results_table.csv`, `results/figures/*` | ~10 s |
 | 7 | `python scripts/07_verify_reproduction.py --samples 4` | 1–5 | nothing (test only) | ~5 min |
+| 8 | `python scripts/08_publish_hf.py --stage --verify-samples 4` | checkpoints | `hf/engram_step_000750.pt`, `hf/config.json` | ~6 min |
+
+Step 8 is optional: it rebuilds the Hugging Face delta and checks that it still
+reproduces the in-repo predictions. Add `--upload` to push
+`Thanabordee/Qwen3-ASR-0.6B-Thai-Engram`. It is not needed to reproduce any
+reported number.
 
 Step 5 can also be run in one pass with
 `python scripts/05_benchmark_llm_int8.py --variant both`, which skips the chunk

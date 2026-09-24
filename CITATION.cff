@@ -37,7 +37,11 @@ keywords:
 # Once the Zenodo record is published, add the assigned DOI here, for example:
 # doi: 10.5281/zenodo.0000000
 # The companion technical-report record can be referenced as:
-# identifiers:
 #   - type: doi
 #     value: 10.5281/zenodo.0000000
 #     description: "Companion technical reports (English and Thai)"
+# The trained Engram delta alone is already public:
+identifiers:
+  - type: url
+    value: "https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram"
+    description: "Trained Engram delta and standalone loader (CC BY-SA 4.0)"

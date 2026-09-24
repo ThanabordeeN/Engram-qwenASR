@@ -25,14 +25,16 @@ reports="$OUT/EngramQwenASR-technical-reports-v$VERSION.zip"
 rm -f "$software" "$reports"
 
 # --- Record 1: software, results, and the checkpoints ----------------------- #
+# hf/ ships without the generated delta (hf/*.pt): that file is a strip of the
+# checkpoint already archived under checkpoints/, and scripts/08 rebuilds it.
 zip -q -r "$software" \
   README.md REPRODUCE.md LICENSE CITATION.cff requirements.txt .gitignore \
-  src scripts configs data docs \
+  src scripts configs data docs hf \
   results/predictions results/summaries results/tables results/figures \
   checkpoints \
   archive/notebooks \
   exports/nf4/manifest.json \
-  -x '*/__pycache__/*' '*.pyc'
+  -x '*/__pycache__/*' '*.pyc' 'hf/*.pt'
 
 # --- Record 2: the technical reports, with the figures they include --------- #
 # reports/*.tex resolves its figures through \graphicspath{{../../results/figures/}},
