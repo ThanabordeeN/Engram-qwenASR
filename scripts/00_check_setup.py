@@ -114,7 +114,9 @@ for lang in ("en", "th"):
     present = sum((PROJECT_ROOT / f"reports/{lang}" / f"project_technical_report_{lang}.{ext}").is_file()
                   for ext in ("md", "tex", "pdf"))
     print(f"  reports/{lang}/: {present}/3 files"
-          + ("" if present == 3 else "  — see the companion technical-reports record"))
+          + ("" if present == 3 else
+             "  — not deposited: the preprint record holds the PDF only, so the"
+             " sources exist in the working tree and nowhere else"))
 for name in ("baseline_nf4_w4.pt", "step750_engram_nf4_w4.pt"):
     present = (PROJECT_ROOT / "exports" / "nf4" / name).is_file()
     print(f"  exports/nf4/{name}: {'present' if present else 'absent'}"

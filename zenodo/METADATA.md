@@ -26,7 +26,7 @@ reports zip as a local copy of the LaTeX sources, but nothing uploads it.
 `sha256` of the software archive:
 
 ```
-5487903b483cfa24a3c19e2d986d3e5bc67e736068eb13b08f729e800bdfe0fc  EngramQwenASR-software-v1.0.0.zip
+43645a76653845569c4993d969379c7dec07f59d0430c54a47b2e731f6950004  EngramQwenASR-software-v1.0.0.zip
 ```
 
 The software archive was verified by extraction into an empty directory and by
