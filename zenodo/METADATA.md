@@ -40,11 +40,12 @@ e7188d8a0ff43b3487f4129e3d706c22b003094a61cb6fa8bb4ae3cf7e6db4cb  project_techni
 ```
 
 `sha256` of the same two PDFs **in the working tree**, which are newer — the
-Background section gained an LLM.int8 subsection after the record was published:
+Background section gained an LLM.int8 subsection and the Introduction was
+expanded, both after the record was published:
 
 ```
-2348b41ade2e14d010941fa16fd1cc69c678eda58d76fc13a47b5d977f4d6df6  project_technical_report_en.pdf
-0e5c55ccd772b1702ac0e5cd304c2bca10e098af19343c233467d0182260ccf4  project_technical_report_th.pdf
+db68f3d36b8c589748fe471d84cb3f6e3d66284628559fa3424abdd6937b3505  project_technical_report_en.pdf
+af5cc6ac13125bc17f83580b68b9878c9b48c34c5f1819d7a141096fd4b5e5cb  project_technical_report_th.pdf
 ```
 
 The English edition is 15 pages either way; the Thai edition went from 16 to 17.
@@ -330,11 +331,16 @@ The archive `sha256` recorded above is therefore the working tree's, not the
 published file's; the published one is
 `57c1cc489ef2fcf854e1f0d3bf653a2b81aaa58df57aca34a92c5376d34dfff3`.
 
-**Undecided — preprint PDFs.** Both PDFs were rebuilt after the Background section
-gained its LLM.int8 subsection, so the published preprint predates that change.
-The same file freeze applies. This one is content, not wording: a reader of the
-published preprint will not find the origin of LLM.int8 explained in Background,
-only its configuration in Methodology.
+**Undecided — preprint PDFs.** Both PDFs were rebuilt after two changes the
+published preprint does not contain: the Background section gained its LLM.int8
+subsection, and the Introduction was expanded from 115 words to roughly 450. The
+Introduction previously opened straight into the research questions with no
+context, no motivation, no headline result, no roadmap, and no citations, while
+the Abstract ran to 434 words.
+
+The same file freeze applies. This is content, not wording: a reader of the
+published preprint gets a materially thinner Introduction and no account of where
+LLM.int8 comes from.
 
 Options, unchanged from the archive case: a 1.0.1 version, a support request, or
 leave it and let the repository carry the corrected PDFs. Not yet decided.
