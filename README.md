@@ -176,6 +176,12 @@ transcripts are, under CC BY-SA 4.0 with the attribution above.
 
 ## Citation
 
-`CITATION.cff` is machine-readable; GitHub and Zenodo both read it. The Zenodo
-DOI is minted on publication and should then be added to `CITATION.cff` and to
-[`zenodo/METADATA.md`](zenodo/METADATA.md).
+`CITATION.cff` is machine-readable; GitHub and Zenodo both read it.
+
+| | |
+|---|---|
+| Software (this repository) | [10.5281/zenodo.22933541](https://doi.org/10.5281/zenodo.22933541) |
+| Preprint, English and Thai | [10.5281/zenodo.22933543](https://doi.org/10.5281/zenodo.22933543) |
+| Trained Engram delta | [Thanabordee/Qwen3-ASR-0.6B-Thai-Engram](https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram) |
+
+Cite the software DOI for the code and results, the preprint DOI for the write-up.

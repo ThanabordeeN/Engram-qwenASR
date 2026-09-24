@@ -47,6 +47,11 @@ PUBLICATION_TYPES = {"Report": "report", "Preprint": "preprint", "Article": "art
 ACCESS_RIGHTS = {"Open Access": "open", "Restricted": "restricted", "Closed": "closed"}
 LANGUAGES = {"English": "eng", "Thai": "tha"}
 
+# The two places the deposit points at. Note the account names differ: GitHub is
+# ThanabordeeN, Hugging Face is Thanabordee.
+GITHUB_REPO = "https://github.com/ThanabordeeN/Engram-qwenASR"
+HUB_URL = "https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram"
+
 # Files deposited per record, relative to the project root.
 #
 # Record 2 carries the two PDFs directly, NOT a zip: Zenodo renders an inline
@@ -306,6 +311,70 @@ def create(tok: str, records: dict[int, dict]) -> dict:
     return state
 
 
+def link(tok: str, records: dict[int, dict]) -> None:
+    """Set related_identifiers on already-published records.
+
+    Publishing through the web UI skips the cross-links that --publish would
+    have set. Metadata stays editable after publication and the DOI does not
+    change, so this can be run at any time.
+    """
+    if not STATE.is_file():
+        raise SystemExit("no deposits.json — nothing to link")
+    state = json.loads(STATE.read_text())
+
+    dois, published = {}, {}
+    for key, entry in state.items():
+        d = requests.get(f"{API}/deposit/depositions/{entry['id']}",
+                         headers=_headers(tok), timeout=120).json()
+        published[key] = bool(d.get("submitted"))
+        if not published[key]:
+            raise SystemExit(f"record {key}: draft {entry['id']} is not published yet")
+        dois[key] = d["doi"]
+        state[key]["doi"] = d["doi"]
+        state[key]["record_url"] = d["links"].get("record_html")
+
+    for num, meta in records.items():
+        key = str(num)
+        base = f"{API}/deposit/depositions/{state[key]['id']}"
+        other = "2" if key == "1" else "1"
+        related = [{
+            "relation": "issupplementedby" if num == 1 else "issupplementto",
+            "identifier": dois[other],
+            "scheme": "doi",
+            "resource_type": "publication" if other == "2" else "software",
+        }]
+        for url in (GITHUB_REPO, HUB_URL):
+            related.append({"relation": "issupplementedby", "identifier": url,
+                            "scheme": "url", "resource_type": "software"})
+
+        # A published record has to be unlocked before its metadata can be
+        # written, and re-published for the change to show. Zenodo's docs are
+        # explicit that this does not affect the DOI; only *files* are frozen
+        # after publication. The edit is discarded if any step fails, so a
+        # half-written record is not left behind.
+        r = requests.post(f"{base}/actions/edit", headers=_headers(tok), timeout=120)
+        if r.status_code >= 400:
+            raise SystemExit(f"record {num}: could not unlock for editing\n{r.text}")
+
+        payload = {k: v for k, v in meta.items() if not k.startswith("_")}
+        payload["related_identifiers"] = related
+        r = requests.put(base, json={"metadata": payload}, headers=_headers(tok), timeout=120)
+        if r.status_code >= 400:
+            requests.post(f"{base}/actions/discard", headers=_headers(tok), timeout=120)
+            raise SystemExit(f"record {num}: link rejected ({r.status_code})\n{r.text}\n"
+                             f"  (edit discarded)")
+
+        r = requests.post(f"{base}/actions/publish", headers=_headers(tok), timeout=600)
+        if r.status_code >= 400:
+            requests.post(f"{base}/actions/discard", headers=_headers(tok), timeout=120)
+            raise SystemExit(f"record {num}: re-publish failed\n{r.text}\n  (edit discarded)")
+        print(f"record {num}: linked to {dois[other]}, {GITHUB_REPO}, {HUB_URL} "
+              f"(doi unchanged: {r.json().get('doi')})")
+
+    STATE.write_text(json.dumps(state, indent=2) + "\n")
+    print("\nDOIs:", json.dumps(dois, indent=2))
+
+
 def publish(tok: str, records: dict[int, dict]) -> None:
     if not STATE.is_file():
         raise SystemExit("no drafts — run --create first")
@@ -365,6 +434,8 @@ def main() -> None:
     g.add_argument("--dry-run", action="store_true", help="parse METADATA.md and print (no token)")
     g.add_argument("--create", action="store_true", help="create drafts, upload, set metadata")
     g.add_argument("--publish", action="store_true", help="mint both DOIs and cross-link")
+    g.add_argument("--link", action="store_true",
+                   help="set related_identifiers on already-published records")
     g.add_argument("--status", action="store_true", help="show recorded drafts and DOIs")
     args = p.parse_args()
 
@@ -377,6 +448,8 @@ def main() -> None:
         create(token(), records)
     elif args.publish:
         publish(token(), records)
+    elif args.link:
+        link(token(), records)
     else:
         dry_run(records)
 

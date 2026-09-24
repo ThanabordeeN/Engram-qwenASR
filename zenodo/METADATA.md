@@ -26,7 +26,7 @@ reports zip as a local copy of the LaTeX sources, but nothing uploads it.
 `sha256` of the software archive:
 
 ```
-480d49e8add5ecf0aa1017359607fa6ffa81e46eb025aa1e6c22d0f5b52e4480  EngramQwenASR-software-v1.0.0.zip
+f16c96029bd3c0ea614721049f7d3a7fc7cd5ae470119cdc47de2fd0de2805a1  EngramQwenASR-software-v1.0.0.zip
 ```
 
 The software archive was verified by extraction into an empty directory and by
@@ -291,14 +291,26 @@ relation `is supplement to`, identifier `10.5281/zenodo.<software-id>`
 
 ---
 
-## After publishing both records
+## After publishing both records — done 2026-09-24
 
-1. Copy each DOI into the other record's **Related works** field and save.
-   Editing metadata after publication is allowed; the DOI itself does not change.
-2. Add the software DOI to `CITATION.cff` (the commented placeholder at the
-   bottom marks the spot) and to `README.md`, then commit.
-3. If you want the repository linked from the records, it has to be public first.
-   Until then the Zenodo DOI is the citable address.
+1. **Done.** Each DOI is in the other record's **Related works**, plus the
+   GitHub repository and the Hub model on both. Applied with
+   `scripts/09_deposit_zenodo.py --link`, which unlocks a published record with
+   `actions/edit`, writes the metadata, and re-publishes. Zenodo's docs are
+   explicit that this does not affect the DOI; only *files* are frozen after
+   publication. Both records stayed at version 1.0.0.
+2. **Done.** The software DOI is in `CITATION.cff` and both DOIs are in
+   `README.md`.
+3. **Done.** The repository is public at
+   <https://github.com/ThanabordeeN/Engram-qwenASR>, so both records link to it.
+
+**Open item.** The published software archive was frozen before the README's
+redistribution wording was corrected and before `CITATION.cff` gained
+`repository-code` and the DOIs, so it differs from the working tree in exactly
+those two files. Zenodo cannot replace a file on a published record: the docs
+say files "can only be edited (added, modified or deleted) after publication by
+contacting support". Fixing it needs either a support request or a 1.0.1 version.
+The archive's code, results, and data are unaffected.
 
 ---
 
