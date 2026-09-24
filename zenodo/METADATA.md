@@ -26,7 +26,7 @@ reports zip as a local copy of the LaTeX sources, but nothing uploads it.
 `sha256` of the software archive:
 
 ```
-57c1cc489ef2fcf854e1f0d3bf653a2b81aaa58df57aca34a92c5376d34dfff3  EngramQwenASR-software-v1.0.0.zip
+480d49e8add5ecf0aa1017359607fa6ffa81e46eb025aa1e6c22d0f5b52e4480  EngramQwenASR-software-v1.0.0.zip
 ```
 
 The software archive was verified by extraction into an empty directory and by
@@ -195,6 +195,11 @@ repository: <https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram>.
 If Zenodo offers it, use the relation `is supplemented by`; otherwise put the URL
 in the description. The Hub copy is the delta plus a standalone loader, so it is
 a strict subset of this archive.
+
+**Alternate location** — the source repository, public at
+<https://github.com/ThanabordeeN/Engram-qwenASR>, related as `is supplemented by`.
+Note the account name differs from the Hub one: GitHub is `ThanabordeeN`, Hugging
+Face is `Thanabordee`.
 
 ---
 

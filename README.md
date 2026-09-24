@@ -5,6 +5,9 @@ quality, memory, and latency of BF16, NF4, and LLM.int8 inference on ROCm"*.
 
 **Author:** Thanabodee Nammungkun (ธนบดี นามมุงคุณ)
 
+**Repository:** <https://github.com/ThanabordeeN/Engram-qwenASR> ·
+**Model:** <https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram>
+
 The experiment adds a token-level bigram/trigram memory (**Engram**) to a frozen
 Qwen3-ASR-0.6B and measures Thai transcription quality on a fixed 300-clip
 held-out set, then compares three numerical precisions: **BF16**, **NF4**
@@ -141,12 +144,20 @@ PyTorch/ROCm through bitsandbytes, not from llama.cpp.
   [Thanabordee/Qwen3-ASR-0.6B-Thai-Engram](https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram).
   `scripts/08_publish_hf.py` rebuilds and re-verifies that artifact.
 
-Data and models used, **not redistributed here**:
+Data and models used. The **audio** is fetched at run time and never redistributed
+here; the 300 reference transcripts are, because they are the frozen contract the
+evaluation depends on:
 
-| Resource | Owner | Licence |
-|---|---|---|
-| [Porjai-Thai-voice-dataset-central](https://huggingface.co/datasets/CMKL/Porjai-Thai-voice-dataset-central) (Thai-dialect corpus) | CMKL University; Suwanbandit, Naowarat, Sangpetch, and Chuangsuwanich | CC BY-SA 4.0 |
-| [Qwen/Qwen3-ASR-0.6B](https://huggingface.co/Qwen/Qwen3-ASR-0.6B) | Qwen Team | see model card |
+| Resource | Owner | Licence | In this repo? |
+|---|---|---|---|
+| [Porjai-Thai-voice-dataset-central](https://huggingface.co/datasets/CMKL/Porjai-Thai-voice-dataset-central) (Thai-dialect corpus) | CMKL University; Suwanbandit, Naowarat, Sangpetch, and Chuangsuwanich | CC BY-SA 4.0 | audio: no — 300 reference transcripts: yes, in `data/eval_set_300.json` and the `results/predictions/` files |
+| [Qwen/Qwen3-ASR-0.6B](https://huggingface.co/Qwen/Qwen3-ASR-0.6B) | Qwen Team | see model card | no |
+
+The 300 transcripts are redistributed under the corpus's CC BY-SA 4.0 terms, with
+the attribution above. They are not optional: `scripts/00_check_setup.py` and every
+benchmark script re-check the streamed clips against that list, so removing them
+would remove the ability to tell whether the upstream corpus changed. The audio
+itself stays with its provider.
 
 Both are fetched at run time by the scripts. The corpus card records support from
 the PMU-C grant (C10F630122), compute from the Apex cluster team, and donated
@@ -160,7 +171,8 @@ Investigation for Dialect Automatic Speech Recognition*, INTERSPEECH 2023
 > attach to the derived weights. They are released under **CC BY-SA 4.0**, with
 > the corpus credited; the delta alone is public on the
 > [Hugging Face Hub](https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram).
-> The dataset itself is never redistributed here.
+> The audio of the corpus is never redistributed here; the 300 reference
+transcripts are, under CC BY-SA 4.0 with the attribution above.
 
 ## Citation
 

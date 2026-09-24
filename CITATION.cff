@@ -21,6 +21,7 @@ authors:
 version: 1.0.0
 date-released: 2026-09-24
 license: MIT
+repository-code: "https://github.com/ThanabordeeN/Engram-qwenASR"
 keywords:
   - automatic speech recognition
   - Thai speech recognition
