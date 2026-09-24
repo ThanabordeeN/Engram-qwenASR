@@ -35,13 +35,15 @@ keywords:
   - ROCm
   - model compression
   - reproducibility
-# Published 2026-09-24. The software DOI is this record's own;
-# the companion preprint carries the English and Thai PDFs.
+# Published 2026-09-24. The software DOI is this record's own; the companion
+# preprint carries the English and Thai PDFs. The preprint value is the concept
+# DOI, which always resolves to the newest version (currently 1.0.1,
+# 10.5281/zenodo.22936454).
 doi: 10.5281/zenodo.22933541
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.22933543
-    description: "Companion preprint, English and Thai (CC BY 4.0)"
+    value: 10.5281/zenodo.22933542
+    description: "Companion preprint, English and Thai, newest version (CC BY 4.0)"
   - type: url
     value: "https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram"
     description: "Trained Engram delta and standalone loader (CC BY-SA 4.0)"

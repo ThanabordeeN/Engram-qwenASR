@@ -181,7 +181,9 @@ transcripts are, under CC BY-SA 4.0 with the attribution above.
 | | |
 |---|---|
 | Software (this repository) | [10.5281/zenodo.22933541](https://doi.org/10.5281/zenodo.22933541) |
-| Preprint, English and Thai | [10.5281/zenodo.22933543](https://doi.org/10.5281/zenodo.22933543) |
+| Preprint, English and Thai | [10.5281/zenodo.22933542](https://doi.org/10.5281/zenodo.22933542) |
 | Trained Engram delta | [Thanabordee/Qwen3-ASR-0.6B-Thai-Engram](https://huggingface.co/Thanabordee/Qwen3-ASR-0.6B-Thai-Engram) |
 
 Cite the software DOI for the code and results, the preprint DOI for the write-up.
+The preprint DOI above is the concept DOI and always resolves to the newest
+version (currently 1.0.1, [10.5281/zenodo.22936454](https://doi.org/10.5281/zenodo.22936454)).

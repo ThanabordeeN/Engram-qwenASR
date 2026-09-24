@@ -7,7 +7,7 @@ Audio-Laya deposit: software and technical reports.
 |---|---|---|---|
 | `EngramQwenASR-software-v1.0.0.zip` | Software | MIT | ~932 KB |
 | `project_technical_report_en.pdf` | Publication / Preprint | CC BY 4.0 | 186 KB |
-| `project_technical_report_th.pdf` | Publication / Preprint | CC BY 4.0 | 215 KB |
+| `project_technical_report_th.pdf` | Publication / Preprint | CC BY 4.0 | 213 KB |
 
 The preprint record carries the two PDFs **directly, not zipped**. Zenodo renders
 an inline preview for a PDF — a `preview-iframe` plus a IIIF canvas — and shows
@@ -32,23 +32,25 @@ f16c96029bd3c0ea614721049f7d3a7fc7cd5ae470119cdc47de2fd0de2805a1  EngramQwenASR-
 The software archive was verified by extraction into an empty directory and by
 running `scripts/00_check_setup.py` there without the weights present.
 
-`sha256` of the two PDFs **as deposited**, so the record's bytes can be checked:
+`sha256` of the two PDFs **as deposited in v1.0.0**, kept so that version's
+bytes can still be checked:
 
 ```
 e7188d8a0ff43b3487f4129e3d706c22b003094a61cb6fa8bb4ae3cf7e6db4cb  project_technical_report_en.pdf
 9217ca8862ad3216f4ab77554c2c2241930c09f720ce13c2baadd01ff360712f  project_technical_report_th.pdf
 ```
 
-`sha256` of the same two PDFs **in the working tree**, which are newer — the
-Background section gained an LLM.int8 subsection and the Introduction was
-expanded, both after the record was published:
+`sha256` of the two PDFs **published as v1.0.1**, and identical to the working
+tree. This version adds the LLM.int8 background subsection, expands the
+Introduction, revises the prose in both languages, and corrects details checked
+against the source code and saved results:
 
 ```
-db68f3d36b8c589748fe471d84cb3f6e3d66284628559fa3424abdd6937b3505  project_technical_report_en.pdf
-af5cc6ac13125bc17f83580b68b9878c9b48c34c5f1819d7a141096fd4b5e5cb  project_technical_report_th.pdf
+73914ef4d7b2f1713741a11b9277b2cbd109a548b04d646106e9320d4d4ddd63  project_technical_report_en.pdf
+2707eca1a7d7641058ce3bd75b08a98b5211bf8f25f76e14b23975b4c9d35c84  project_technical_report_th.pdf
 ```
 
-The English edition is 15 pages either way; the Thai edition went from 16 to 17.
+The page counts are 15 for English and 16 for Thai in both versions.
 
 Note that `reports/` is **not** in the GitHub repository: it is git-ignored. It
 used to be distributed through the reports record, but the preprint record now
@@ -218,9 +220,11 @@ Face is `Thanabordee`.
 **Upload type:** Publication → Preprint
 **Access right:** Open Access
 **Licence:** Creative Commons Attribution 4.0 International
-**Version:** 1.0.0
-**Language:** English — the archive also carries a Thai edition
-**DOI:** leave empty — Zenodo assigns it on publish
+**Version:** 1.0.1
+**Language:** English — the record also carries a Thai edition
+**DOI:** leave empty — Zenodo assigns it on publish. Published versions:
+1.0.0 is `10.5281/zenodo.22933543`; 1.0.1 is `10.5281/zenodo.22936454`.
+The concept DOI is `10.5281/zenodo.22933542`.
 
 **Title**
 
@@ -238,12 +242,15 @@ ORCID: 0009-0004-9410-9839
 **Description**
 
 ```
-Technical report, version 1.0.0, in English and Thai, deposited as a preprint.
-Both editions are included as PDF, in full, one file per language.
+Technical report, version 1.0.1, in English and Thai, deposited as a preprint.
+Both editions are included as PDF, in full, one file per language. This version
+expands the background and introduction, revises the academic prose in both
+languages, and corrects the parameter count and evaluation-protocol details.
 
 The report asks whether a token-level N-gram memory (Engram) reduces Thai
-transcription errors when added to a frozen Qwen3-ASR-0.6B, and what three
-numerical precisions cost in quality, model-tensor storage, peak allocated VRAM,
+transcription errors when added to Qwen3-ASR-0.6B (the evaluation code freezes
+its base weights), and what three numerical precisions cost in quality,
+model-tensor storage, peak allocated VRAM,
 and latency. It is written for a reader who is new to ASR terminology: the terms
 that carry the argument are defined where they are used.
 
@@ -255,16 +262,19 @@ Findings, with the limits that apply to each:
 
 - Engram step 750 in BF16 reduced corpus character error rate from 17.8051% to
   9.0448% on a fixed 300-clip Thai evaluation set, with character-level micro F1
-  rising from 86.3235% to 92.9302%. This is one fixed sample from one offset of
-  one corpus, not the full dataset, and no confidence intervals were computed.
+  rising from 86.3235% to 92.9302%. The clips come from the dataset's streaming
+  train split; overlap with Engram's original training data cannot be ruled out
+  because the complete training procedure is unavailable. No confidence
+  intervals were computed.
 - Quantization cost quality in this setup. NF4 raised CER to 28.7086% for the
   baseline and 20.9178% for Engram; LLM.int8 raised it to 18.8901% and 10.8413%.
   Engram NF4 remained 3.1128 CER percentage points above the BF16 baseline, which
   is a difference in CER and not a 3% loss of accuracy.
 - Smaller weights were not faster. Both quantized variants ran slower per clip
-  than their BF16 counterpart on this GPU and backend. NF4 reduced model-tensor
-  storage by about 62% and LLM.int8 by about 29%, but both increased peak
-  allocated VRAM.
+  than their BF16 counterparts on this GPU and backend. NF4 reduced model-tensor
+  storage by about 62% and peak allocated VRAM by about 36%; LLM.int8 reduced
+  model-tensor storage by about 29% but increased peak allocated VRAM by about
+  53–54%.
 - The two quantizers do not touch the same parameters: NF4 applies to Linear and
   Embedding modules, LLM.int8 to Linear modules only, leaving embeddings in BF16.
   This is a limitation of the comparison and the report says so.
@@ -301,6 +311,28 @@ relation `is supplement to`, identifier `10.5281/zenodo.<software-id>`
 
 ---
 
+## v1.0.1 of the reports record — published 2026-09-24
+
+Created with `POST /api/deposit/depositions/22933543/actions/newversion`, which
+opens a draft under the same concept record (`22933542`). The draft inherits both
+the metadata and the v1.0.0 files. The inherited PDFs were deleted and the
+revised ones uploaded in their place, because Zenodo's file `PUT` only renames —
+replacing content means delete, then upload.
+
+| | |
+|---|---|
+| v1.0.0 | [10.5281/zenodo.22933543](https://doi.org/10.5281/zenodo.22933543), unchanged |
+| v1.0.1 | [10.5281/zenodo.22936454](https://doi.org/10.5281/zenodo.22936454), current |
+| Concept | [10.5281/zenodo.22933542](https://doi.org/10.5281/zenodo.22933542), always newest |
+
+Both records point at the software DOI, the GitHub repository, and the Hugging
+Face model; the new version inherited those links rather than being relinked.
+`zenodo/deposits.json` records the new deposition id, the new DOI, and the
+version it superseded. `README.md` and `CITATION.cff` now cite the concept DOI,
+so they keep resolving as versions are added.
+
+---
+
 ## After publishing both records — done 2026-09-24
 
 1. **Done.** Each DOI is in the other record's **Related works**, plus the
@@ -331,19 +363,20 @@ The archive `sha256` recorded above is therefore the working tree's, not the
 published file's; the published one is
 `57c1cc489ef2fcf854e1f0d3bf653a2b81aaa58df57aca34a92c5376d34dfff3`.
 
-**Undecided — preprint PDFs.** Both PDFs were rebuilt after two changes the
-published preprint does not contain: the Background section gained its LLM.int8
-subsection, and the Introduction was expanded from 115 words to roughly 450. The
-Introduction previously opened straight into the research questions with no
-context, no motivation, no headline result, no roadmap, and no citations, while
-the Abstract ran to 434 words.
+**Preprint revisions — published as v1.0.1.** Both revised PDFs, English and
+Thai, are live at <https://doi.org/10.5281/zenodo.22936454>, created as a new
+version of the same record (concept DOI `10.5281/zenodo.22933542`). v1.0.0 at
+<https://doi.org/10.5281/zenodo.22933543> stays public and unchanged; Zenodo
+freezes files after publication, so the earlier version cannot be edited.
 
-The same file freeze applies. This is content, not wording: a reader of the
-published preprint gets a materially thinner Introduction and no account of where
-LLM.int8 comes from.
+Both editions were published, superseding the earlier note that the Thai PDF
+would not be uploaded. The v1.0.1 record carries the software DOI, the GitHub
+repository, and the Hugging Face model as related identifiers, inherited from
+v1.0.0.
 
-Options, unchanged from the archive case: a 1.0.1 version, a support request, or
-leave it and let the repository carry the corrected PDFs. Not yet decided.
+Local files still need an explicit backup: `reports/` is git-ignored and GitHub
+does not contain the LaTeX sources or the PDFs, so the working tree is the only
+copy of them.
 
 ---
 
